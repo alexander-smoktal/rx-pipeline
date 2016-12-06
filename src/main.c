@@ -1,7 +1,13 @@
-#include <stdio.h>
+#include <uv.h>
+
+#include "atom.h"
 
 int main(int argc, char *argv[])
 {
-    printf("Hello World!\n");
+    init_log();
+
+    log_debug("Hello world");
+
+    deinit_log();
     return 0;
 }
