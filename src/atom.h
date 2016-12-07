@@ -10,6 +10,6 @@
 
 #include "log.h"
 #include "loop.h"
-#include "stream.h"
+#include "utils.h"
 
 #endif // _ATOM_H_
