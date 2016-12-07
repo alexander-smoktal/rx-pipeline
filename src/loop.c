@@ -1,22 +1,21 @@
 #include "loop.h"
 
-// Stream type to implement runtime polymorphism
+// Connector type for runtime polymorphism
 typedef enum {
-    ST_TTY,
-    ST_FILE,
-    ST_SOCKET
-} StreamType;
+    CT_TTY,
+    CT_FILE,
+    CT_SOCKET
+} ConnectorType;
 
 /**
- * @brief The Stream struct. Polymorphic stream type, to pull from multiple
+ * @brief The Connector struct. Polymorphic connector type, to pull from multiple
  * sources with same callbacks.
  */
-struct Stream {
+struct Connector {
     void *handler;        // Libuv uv_handle_t
-    StreamType type;      // Stream type for run-time polymorphysm
+    ConnectorType type;   // Connector type for run-time polymorphysm
     src_read_cb callback; // User callback
-    void *ctxt;           // User context. May be retrieved by 'stream_get_context'
-                          // inside user callback.
+    void *ctxt;           // User context. May be retrieved by 'connector_get_context' inside user callback.
 };
 
 /**
@@ -51,17 +50,17 @@ static uv_buf_t alloc_cb(uv_handle_t *handle, size_t suggested_size) {
 }
 
 static void read_cb(uv_stream_t* stream, ssize_t nread, uv_buf_t buf) {
-    Stream *internal_stream = (Stream *) stream->data;
+    Connector *connector = (Connector *) stream->data;
 
-    internal_stream->callback(internal_stream, nread, buf.base);
+    connector->callback(connector, nread, buf.base);
     free(buf.base);
 }
 
-Stream *loop_tty_create(Loop *loop, src_read_cb callback, void *ctxt) {
+Connector *loop_tty_create(Loop *loop, src_read_cb callback, void *ctxt) {
     CHECK_NULL_RETURN(loop, NULL);
     CHECK_NULL_RETURN(callback, NULL);
 
-    Stream *result = malloc(sizeof(Stream));
+    Connector *result = malloc(sizeof(Connector));
     uv_tty_t *tty = malloc(sizeof(uv_tty_t));
 
     if (!uv_tty_init(loop->loop, tty, 0, true)) {
@@ -69,15 +68,14 @@ Stream *loop_tty_create(Loop *loop, src_read_cb callback, void *ctxt) {
             tty->data = result;
             result->handler = tty;
             result->callback = callback;
-            result->type = ST_TTY;
+            result->type = CT_TTY;
             result->ctxt = ctxt;
 
             return result;
         } else {
             log_error("Can't start reading tty");
         }
-    }
-    else {
+    } else {
         log_error("Can't create tty");
     }
 
@@ -86,7 +84,7 @@ Stream *loop_tty_create(Loop *loop, src_read_cb callback, void *ctxt) {
     return NULL;
 }
 
-Stream *loop_file_create(Loop *loop, const char *path, src_read_cb callback, void *ctxt) {
+Connector *loop_file_create(Loop *loop, const char *path, src_read_cb callback, void *ctxt) {
     CHECK_NULL_RETURN(loop, NULL);
     CHECK_NULL_RETURN(callback, NULL);
     CHECK_NULL_RETURN(path, NULL);
@@ -95,25 +93,25 @@ Stream *loop_file_create(Loop *loop, const char *path, src_read_cb callback, voi
     return NULL;
 }
 
-bool stream_shutdown(Stream *stream) {
-    CHECK_NULL_RETURN(stream, false);
+bool connector_shutdown(Connector *connector) {
+    CHECK_NULL_RETURN(connector, false);
     bool ret = false;
 
-    switch (stream->type) {
-    case ST_TTY:
-        ret = uv_read_stop(stream->handler);
+    switch (connector->type) {
+    case CT_TTY:
+        ret = uv_read_stop(connector->handler);
     default:
-        log_error("Invalid stream type");
+        log_error("Invalid connector type");
     }
 
-    free(stream->handler);
-    free(stream);
+    free(connector->handler);
+    free(connector);
 
     return ret;
 }
 
-void *stream_get_context(Stream *stream) {
-    CHECK_NULL_RETURN(stream, NULL);
+void *connector_get_context(Connector *connector) {
+    CHECK_NULL_RETURN(connector, NULL);
 
-    return stream->ctxt;
+    return connector->ctxt;
 }

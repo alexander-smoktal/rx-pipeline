@@ -1,8 +1,8 @@
 #include "atom.h"
 
-void rd_cb(Stream *stream, ssize_t size, char *buf) {
+void rd_cb(Connector *connector, ssize_t size, char *buf) {
     if (size > 0 && buf[0] == '%') {
-        stream_shutdown(stream);
+        connector_shutdown(connector);
     } else {
         buf[size] = '\0';
         log_debug("stdin: %s", buf);

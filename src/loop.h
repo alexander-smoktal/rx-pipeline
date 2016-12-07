@@ -4,9 +4,9 @@
 #include "atom.h"
 
 typedef struct Loop Loop;
-typedef struct Stream Stream;
+typedef struct Connector Connector;
 
-typedef void (*src_read_cb)(Stream *stream, ssize_t size, char *buf);
+typedef void (*src_read_cb)(Connector *connector, ssize_t size, char *buf);
 
 /**
  * @brief loop_create. Create new Loop object.
@@ -30,36 +30,36 @@ void loop_close(Loop *loop);
 /**
  * @brief loop_tty_create. Create TTY console source, which being pulled by the loop.
  * @param loop Loop, which pulls newly created source.
- * @param callback Callback, whihc will be called once data recieved.
- * @param ctxt Context, which user will be able retrieve with 'stream_get_context'
+ * @param callback Callback, which will be called once data recieved.
+ * @param ctxt Context, which user will be able retrieve with 'connector_get_context'
  *        inside the user callback.
- * @return Newly created stream, if succeeded, or NULL otherwise.
+ * @return Newly created connector, if succeeded, or NULL otherwise.
  */
-Stream *loop_tty_create(Loop *loop, src_read_cb callback, void *ctxt);
+Connector *loop_tty_create(Loop *loop, src_read_cb callback, void *ctxt);
 
 /**
 * @brief loop_file_create. Create file source, which being pulled by the loop.
 * @param loop Loop, which pulls newly created source.
 * @param path Filesystem path to the file.
 * @param callback Callback, whihc will be called once data recieved.
-* @param ctxt Context, which user will be able retrieve with 'stream_get_context'
+* @param ctxt Context, which user will be able retrieve with 'connector_get_context'
 *        inside the user callback.
-* @return Newly created stream, if succeeded, or NULL otherwise.
+* @return Newly created connector, if succeeded, or NULL otherwise.
 */
-Stream *loop_file_create(Loop *loop, const char *path, src_read_cb callback, void *ctxt);
+Connector *loop_file_create(Loop *loop, const char *path, src_read_cb callback, void *ctxt);
 
 /**
- * @brief stream_shutdown. Shutdown the stream a free resources.
- * @param stream Stream
+ * @brief connector_shutdown. Shutdown a connector and free resources.
+ * @param connector Connector.
  * @return If succeeded.
  */
-bool stream_shutdown(Stream *stream);
+bool connector_shutdown(Connector *connector);
 
 /**
- * @brief stream_get_context. Get user context for a stream.
- * @param stream Stream.
+ * @brief connector_get_context. Get user context for a connector.
+ * @param connector Connector.
  * @return User context.
  */
-void *stream_get_context(Stream *stream);
+void *connector_get_context(Connector *connector);
 
 #endif // _LOOP_H_
