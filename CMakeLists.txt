@@ -1,8 +1,12 @@
 project(riot-atom)
 cmake_minimum_required(VERSION 2.8)
 
+find_package (PkgConfig REQUIRED)
+
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+pkg_check_modules(GLIB2 REQUIRED glib-2.0)
+include_directories(${GLIB2_INCLUDE_DIRS})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")

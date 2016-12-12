@@ -7,9 +7,13 @@
 #include <stddef.h>
 
 #include <uv.h>
+#include <glib.h>
 
 #include "log.h"
+#include "connector.h"
 #include "loop.h"
 #include "utils.h"
+#include "observable.h"
+#include "buffer.h"
 
 #endif // _ATOM_H_
