@@ -1,3 +1,2 @@
-Riot implementation in C
+Rx pipeline implementation in C
 =====
-Greenwave Systems(r) 2016
