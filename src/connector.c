@@ -20,15 +20,18 @@ struct Connector {
 };
 
 
-static uv_buf_t alloc_cb(uv_handle_t *handle, size_t suggested_size) {
-  return uv_buf_init((char*) malloc(suggested_size), suggested_size);
+static void alloc_cb(uv_handle_t* handle,
+                         size_t suggested_size,
+                         uv_buf_t* buf) {
+    buf->base = malloc(suggested_size);
+    buf->len = suggested_size;
 }
 
-static void libuv_tty_read_callback(uv_stream_t* stream, ssize_t nread, uv_buf_t buf) {
+static void libuv_tty_read_callback(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf) {
     Connector *connector = (Connector *) stream->data;
 
-    connector->callback(connector, nread, buf.base);
-    free(buf.base);
+    connector->callback(connector, nread, buf->base);
+    free(buf->base);
 }
 
 Connector *loop_tty_create(Loop *loop, src_read_cb callback, void *ctxt) {
@@ -38,8 +41,10 @@ Connector *loop_tty_create(Loop *loop, src_read_cb callback, void *ctxt) {
     Connector *result = malloc(sizeof(Connector));
     uv_tty_t *tty = malloc(sizeof(uv_tty_t));
 
-    if (!uv_tty_init(loop->loop, tty, 0, true)) {
-        if (!uv_read_start((uv_stream_t*) tty, alloc_cb, libuv_tty_read_callback)) {
+    int uv_ret = uv_tty_init(loop->loop, tty, 0, true);
+    if (uv_ret >= 0) {
+        uv_ret = uv_read_start((uv_stream_t*) tty, alloc_cb, libuv_tty_read_callback);
+        if (uv_ret >= 0) {
             tty->data = result;
             result->handler = tty;
             result->callback = callback;
@@ -48,10 +53,10 @@ Connector *loop_tty_create(Loop *loop, src_read_cb callback, void *ctxt) {
 
             return result;
         } else {
-            log_error("Can't start reading tty: %s", uv_strerror(uv_last_error(loop->loop)));
+            log_error("Can't start reading tty: %s", uv_strerror(uv_ret));
         }
     } else {
-        log_error("Can't create tty: %s", uv_strerror(uv_last_error(loop->loop)));
+        log_error("Can't create tty: %s", uv_strerror(uv_ret));
     }
 
     free(tty);
@@ -61,28 +66,31 @@ Connector *loop_tty_create(Loop *loop, src_read_cb callback, void *ctxt) {
 
 static void libuv_file_read_callback(uv_fs_t* req) {
     Connector *connector = (Connector *) req->data;
-    static size_t offset = 0;
 
     if (req->result >= 0) {
+        // File close
         if (req->result == 0) {
+            connector->callback(connector, -1, NULL);
             log_error("EOF");
+        } else {
+            connector->callback(connector, (int)req->result, req->bufs[0].base);
+            uv_buf_t *buf = malloc(sizeof(uv_buf_t));
+            uv_fs_read(req->loop, req, req->result, buf, 1, -1, libuv_file_read_callback);
         }
-        connector->callback(connector, req->len, req->buf);
     } else {
-        log_error("Error reading file: %s", uv_strerror(uv_last_error(connector->loop->loop)));
+        log_error("Error reading file: %s", uv_strerror(req->result));
         connector->callback(connector, -1, NULL);
     }
-    ++offset;
 }
 
 static void libuv_file_open_callback(uv_fs_t* req) {
     Connector *connector = (Connector *) req->data;
 
     if (req->result >= 0) {
-        char *buffer = malloc(sizeof(char) * 1);
-        uv_fs_read(connector->loop->loop, req, req->result, buffer, 1, -1, libuv_file_read_callback);
+        uv_buf_t *buf = malloc(sizeof(uv_buf_t));
+        uv_fs_read(connector->loop->loop, req, req->result, buf, 1, -1, libuv_file_read_callback);
     } else {
-        log_error("Error opening file: %s", uv_strerror(uv_last_error(connector->loop->loop)));
+        log_error("Error opening file: %s", uv_strerror(req->result));
         connector->callback(connector, -1, NULL);
     }
 }
@@ -95,7 +103,8 @@ Connector *loop_file_create(Loop *loop, const char *path, src_read_cb callback, 
     Connector *result = malloc(sizeof(Connector));
     uv_fs_t *request = malloc(sizeof(uv_fs_t));
 
-    if (!uv_fs_open(loop->loop, request, path, O_RDONLY, S_IRUSR, libuv_file_open_callback)) {
+    int uv_ret = uv_fs_open(loop->loop, request, path, O_RDONLY, S_IRUSR, libuv_file_open_callback);
+    if (uv_ret >= 0) {
         request->data = result;
         result->handler = request;
         result->callback = callback;
@@ -105,7 +114,7 @@ Connector *loop_file_create(Loop *loop, const char *path, src_read_cb callback, 
 
         return result;
     } else {
-        log_error("Can't open file at %s.", path);
+        log_error("Can't open file at %s: %s", path, uv_strerror(uv_ret));
     }
 
     free(request);
@@ -115,13 +124,13 @@ Connector *loop_file_create(Loop *loop, const char *path, src_read_cb callback, 
 
 bool connector_shutdown(Connector *connector) {
     CHECK_NULL_RETURN(connector, false);
-    bool ret = false;
+    int uv_ret = 0;
 
     switch (connector->type) {
     case CT_TTY:
-        ret = uv_read_stop(connector->handler);
+        uv_ret = uv_read_stop(connector->handler);
     case CT_FILE:
-        ret = uv_fs_close(connector->loop->loop, NULL, ((uv_fs_t *)connector->handler)->result, NULL);
+        uv_ret = uv_fs_close(connector->loop->loop, NULL, ((uv_fs_t *)connector->handler)->result, NULL);
     default:
         log_error("Invalid connector type");
     }
@@ -129,7 +138,7 @@ bool connector_shutdown(Connector *connector) {
     free(connector->handler);
     free(connector);
 
-    return ret;
+    return uv_ret;
 }
 
 void *connector_get_context(Connector *connector) {

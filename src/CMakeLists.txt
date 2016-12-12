@@ -1,13 +1,14 @@
 
 set(SRC_LIST
-    buffer.c
     connector.c
     log.c
     loop.c
     main.c
     observable.c
-    obs_join.c
-    obs_timer.c
+    observable_pipe.c
+    observable_join.c
+    observable_timer.c
+    pipeline.c
     utils.c)
 
 add_executable(${PROJECT_NAME} ${SRC_LIST})

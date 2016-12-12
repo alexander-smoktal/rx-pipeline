@@ -1,5 +1,4 @@
-#ifndef _UTILS_H_
-#define _UTILS_H_
+#pragma once
 
 #include "atom.h"
 
@@ -9,5 +8,3 @@
         return ret;                        \
     }                                      \
 } while (false);
-
-#endif // _UTILS_H_

@@ -3,26 +3,53 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 
-static Buffer timed_generator(Observable *observable, Buffer data) {
-    Buffer result = {
-        .data = GINT_TO_POINTER(rand() % 256),
-        .size = 0
-    };
-
-    return result;
+static void *timed_generator(Observable *observable, void *data) {
+    return GINT_TO_POINTER(rand() % 256);
 }
 
 
-static Buffer sum_callback(Observable *left, Observable *right, Buffer data) {
-    if (left) {
-        log_error("Got left: %d", GPOINTER_TO_INT(data.data));
-    } else {
-        log_error("Got right timer");
+static void *sum_callback(Observable *left, Observable *right, void *data) {
+    static GArray *data_array = NULL;
+    static bool clear = false;
+
+    if(!data_array) {
+        data_array = g_array_new(false, false, sizeof(int));
     }
 
-    return END();
+    if (clear) {
+        g_array_free(data_array, false);
+        clear = false;
+    }
+
+    if (left) {
+        int value = GPOINTER_TO_INT(data);
+        log_error("Got value from sensor: %d", value);
+        g_array_append_val(data_array, value);
+        return NULL;
+    } else {
+        clear = true;
+        return data_array;
+    }
+
+    return NULL;
 }
 
+static void *average_terminator(Observable *observable, void *data) {
+    GArray *values = (GArray *) data;
+
+    int result = 0;
+    for (size_t i = 0; i < values->len; ++i) {
+        result += g_array_index(values, int, i);
+    }
+    return GINT_TO_POINTER(result / values->len);
+}
+
+static void *int_logger(Observable *observable, void *data) {
+    int value = GPOINTER_TO_INT(data);
+
+    log_error("last average: %d", value);
+    return NULL;
+}
 
 int main(int argc, char *argv[])
 {
@@ -30,11 +57,19 @@ int main(int argc, char *argv[])
     log_init();
 
     Loop *loop = loop_create();
+    PipelineManager *manager = pipemanager_create();
 
-    Observable *generator = observable_timed_generator_create(loop, 100, timed_generator);
-    Observable *sum_timer = observable_timer_create(loop, 1000);
-    Observable *join = observable_join(generator, sum_timer, sum_callback);
-    (void) join;
+    // Group elements for each second
+    Observable *join = observable_join(observable_timer_create(loop, 100, timed_generator),
+                                       observable_timer_create(loop, 1000, NULL),
+                                       sum_callback);
+    // Returns average for every group
+    Observable *average = observable_pipe_create(join, average_terminator);
+    // Prints int value
+    Observable *printer = observable_pipe_create(average, int_logger);
+
+    pipemanager_add_pipeline(manager, printer);
+
     (void) loop_run(loop);
     loop_close(loop);
 

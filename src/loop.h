@@ -1,5 +1,4 @@
-#ifndef _LOOP_H_
-#define _LOOP_H_
+#pragma once
 
 #include "atom.h"
 
@@ -30,5 +29,3 @@ bool loop_run(Loop *loop);
  * @param loop Loop.
  */
 void loop_close(Loop *loop);
-
-#endif // _LOOP_H_

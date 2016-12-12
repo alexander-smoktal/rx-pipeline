@@ -6,7 +6,7 @@ find_package (PkgConfig REQUIRED)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 pkg_check_modules(GLIB2 REQUIRED glib-2.0)
-include_directories(${GLIB2_INCLUDE_DIRS})
+include_directories(${GLIB2_INCLUDE_DIRS} "/usr/include")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0")

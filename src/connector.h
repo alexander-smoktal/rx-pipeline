@@ -1,5 +1,4 @@
-#ifndef _CONNECTOR_H_
-#define _CONNECTOR_H_
+#pragma once
 
 #include "atom.h"
 
@@ -42,5 +41,3 @@ bool connector_shutdown(Connector *connector);
  * @return User context.
  */
 void *connector_get_context(Connector *connector);
-
-#endif // _CONNECTOR_H_
