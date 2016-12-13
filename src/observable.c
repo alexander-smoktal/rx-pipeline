@@ -42,7 +42,7 @@ void observable_subscribe(Observable *listener, Observable *subscriber) {
     g_hash_table_insert(listener->subscribers, subscriber, subscriber);
 }
 
-void observable_unsubscribe_from(Observable *listener, Observable *subscriber) {
+void observable_unsubscribe(Observable *listener, Observable *subscriber) {
     g_hash_table_remove(listener->subscribers, subscriber);
     if (g_hash_table_size(listener->subscribers) == 0) {
         observable_destroy(listener);

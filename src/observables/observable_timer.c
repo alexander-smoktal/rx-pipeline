@@ -17,21 +17,15 @@ static void timer_destroy_callback(Observable *observable) {
 static void libuv_timer_callback(uv_timer_t* handle) {
     Observable *observable = (Observable *) handle->data;
 
-    if (observable->callback) {
-        void *result = observable->callback(observable, NULL);
-        observable_broadcast(observable, result);
-    } else {
-        observable_broadcast(observable, GINT_TO_POINTER(0xBAADF00D));
-    }
+    observable_broadcast(observable, GINT_TO_POINTER(0xBAADF00D));
 }
 
-Observable *observable_timer_create(Loop *loop, uint64_t msec, observable_cb callback) {
+Observable *observable_timer_create(Loop *loop, uint64_t msec) {
     CHECK_NULL_RETURN(loop, NULL);
 
     Timer *result = malloc(sizeof(Timer));
     observable_init(&result->base);
     result->base.destroy_cb = timer_destroy_callback;
-    result->base.callback = callback;
     result->timer = malloc(sizeof(uv_timer_t));
 
     int ret = uv_timer_init(loop->loop, result->timer);

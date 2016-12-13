@@ -3,4 +3,4 @@
 #include "../loop.h"
 #include "../observable.h"
 
-Observable *observable_timer_create(Loop *loop, uint64_t msec, observable_cb callback);
+Observable *observable_timer_create(Loop *loop, uint64_t msec);

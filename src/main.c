@@ -104,12 +104,12 @@ int main(int argc, char *argv[])
 
     // Prints element every 100ms
     Observable *every_100_ms_printer = observable_join(random_sensor,
-                                       observable_timer_create(loop, 100, NULL),
+                                       observable_timer_create(loop, 100),
                                        take_random_callback);
 
     // Group elements for each second
     Observable *each_1_second_grouper = observable_join(random_sensor,
-                                       observable_timer_create(loop, 1000, NULL),
+                                       observable_timer_create(loop, 1000),
                                        sum_callback);
     // Returns average for every group
     Observable *average = observable_map_create(each_1_second_grouper, average_terminator);
