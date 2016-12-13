@@ -112,9 +112,9 @@ int main(int argc, char *argv[])
                                        observable_timer_create(loop, 1000, NULL),
                                        sum_callback);
     // Returns average for every group
-    Observable *average = observable_pipe_create(each_1_second_grouper, average_terminator);
+    Observable *average = observable_map_create(each_1_second_grouper, average_terminator);
     // Prints average
-    Observable *average_printer = observable_pipe_create(average, int_logger);
+    Observable *average_printer = observable_map_create(average, int_logger);
 
     pipemanager_add_pipeline(manager, every_100_ms_printer);
     pipemanager_add_pipeline(manager, average_printer);

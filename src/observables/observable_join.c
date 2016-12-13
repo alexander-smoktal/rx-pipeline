@@ -1,6 +1,6 @@
 #include "observable_join.h"
 
-#include "observable_pipe.h"
+#include "observable_map.h"
 
 typedef struct {
     Observable base;
@@ -45,13 +45,13 @@ Observable *observable_join(Observable *left, Observable *right, observable_join
     result->base.destroy_cb = join_destroy_callback;
     result->callback = callback;
 
-    result->left_source = observable_pipe_create(left, left_join_callback);
+    result->left_source = observable_map_create(left, left_join_callback);
     result->left_source->data = result;
-    observable_subscribe(result->left_source, result);
+    observable_subscribe(result->left_source, (Observable *) result);
 
-    result->right_source = observable_pipe_create(right, right_join_callback);
+    result->right_source = observable_map_create(right, right_join_callback);
     result->right_source->data = result;
-    observable_subscribe(result->right_source, result);
+    observable_subscribe(result->right_source, (Observable *) result);
 
     return (Observable *) result;
 }

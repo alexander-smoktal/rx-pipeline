@@ -5,7 +5,7 @@ set(SRC_LIST
     main.c
     observable.c
     observables/observable_file.c
-    observables/observable_pipe.c
+    observables/observable_map.c
     observables/observable_join.c
     observables/observable_timer.c
     pipeline.c

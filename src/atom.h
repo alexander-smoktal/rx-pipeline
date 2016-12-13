@@ -7,7 +7,7 @@
 #include "pipeline.h"
 #include "observables/observable_file.h"
 #include "observables/observable_join.h"
-#include "observables/observable_pipe.h"
+#include "observables/observable_map.h"
 #include "observables/observable_timer.h"
 
 #endif // _ATOM_H_

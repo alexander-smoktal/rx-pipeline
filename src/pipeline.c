@@ -30,7 +30,7 @@ void pipemanager_make_pipeline(PipelineManager *manager,
 
     va_start(arglist, pipecount);
     for (unsigned int i = 0; i < pipecount; ++i) {
-        pipe = observable_pipe_create(pipe, va_arg(arglist, observable_cb));
+        pipe = observable_map_create(pipe, va_arg(arglist, observable_cb));
     }
 
     g_hash_table_insert(manager->pipelines, pipe, pipe);
