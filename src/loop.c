@@ -1,4 +1,5 @@
 #include "loop.h"
+#include "utils.h"
 
 Loop *loop_create() {
     Loop *result = malloc(sizeof(Loop));

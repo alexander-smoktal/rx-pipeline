@@ -1,5 +1,6 @@
 
 #include "observable.h"
+#include "utils.h"
 
 static void observable_destroy_gwrapper(gpointer data) {
     observable_destroy((Observable *) data);

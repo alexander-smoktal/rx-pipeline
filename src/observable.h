@@ -1,17 +1,12 @@
 #pragma once
 
-#include "atom.h"
+#include "common.h"
 
 struct Observable;
 typedef struct Observable Observable;
 
 typedef void *(*observable_cb)(Observable *observable, void *data);
 typedef void (*observable_destroy_cb)(Observable *observable);
-
-#include "observable_join.h"
-#include "observable_timer.h"
-#include "observable_pipe.h"
-#include "pipeline.h"
 
 struct Observable {
     GHashTable *subscribers;

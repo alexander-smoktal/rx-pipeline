@@ -1,5 +1,7 @@
 #include "observable_join.h"
 
+#include "observable_pipe.h"
+
 typedef struct {
     Observable base;
     Observable *left_source;

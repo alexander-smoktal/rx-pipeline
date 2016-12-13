@@ -1,10 +1,10 @@
 
 set(SRC_LIST
-    connector.c
     log.c
     loop.c
     main.c
     observable.c
+    observable_file.c
     observable_pipe.c
     observable_join.c
     observable_timer.c

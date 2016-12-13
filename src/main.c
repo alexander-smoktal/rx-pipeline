@@ -3,8 +3,10 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 
-static void *timed_generator(Observable *observable, void *data) {
-    return GINT_TO_POINTER(rand() % 256);
+static void *sensor_handler(Observable *observable, void *data) {
+    int *sensor_data = (int *) data;
+
+    return GINT_TO_POINTER(*sensor_data);
 }
 
 
@@ -23,7 +25,7 @@ static void *sum_callback(Observable *left, Observable *right, void *data) {
 
     if (left) {
         int value = GPOINTER_TO_INT(data);
-        log_error("Got value from sensor: %d", value);
+        //log_error("Got value from sensor: %d", value);
         g_array_append_val(data_array, value);
         return NULL;
     } else {
@@ -60,7 +62,7 @@ int main(int argc, char *argv[])
     PipelineManager *manager = pipemanager_create();
 
     // Group elements for each second
-    Observable *join = observable_join(observable_timer_create(loop, 100, timed_generator),
+    Observable *join = observable_join(observable_file_create(loop, "/dev/urandom", sensor_handler),
                                        observable_timer_create(loop, 1000, NULL),
                                        sum_callback);
     // Returns average for every group

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "atom.h"
+#include "log.h"
 
 #define CHECK_NULL_RETURN(val, ret) do { \
     if (val == NULL) {                   \

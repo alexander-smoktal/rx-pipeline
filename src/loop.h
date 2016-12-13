@@ -1,15 +1,13 @@
 #pragma once
 
-#include "atom.h"
+#include "common.h"
 
 /**
  * @brief The Loop struct. Loop abstraction above Libuv loop.
  */
-struct Loop {
+typedef struct {
     uv_loop_t *loop;      // Internal Libuv loop
-};
-
-typedef struct Loop Loop;
+} Loop;
 
 /**
  * @brief loop_create. Create new Loop object.
