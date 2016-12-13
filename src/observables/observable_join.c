@@ -47,11 +47,11 @@ Observable *observable_join(Observable *left, Observable *right, observable_join
 
     result->left_source = observable_pipe_create(left, left_join_callback);
     result->left_source->data = result;
-    g_hash_table_insert(result->left_source->subscribers, result, result);
+    observable_subscribe(result->left_source, result);
 
     result->right_source = observable_pipe_create(right, right_join_callback);
     result->right_source->data = result;
-    g_hash_table_insert(result->right_source->subscribers, result, result);
+    observable_subscribe(result->right_source, result);
 
     return (Observable *) result;
 }

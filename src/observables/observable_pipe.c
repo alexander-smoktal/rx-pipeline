@@ -25,7 +25,7 @@ Observable *observable_pipe_create(Observable *observable, observable_cb callbac
     result->base.destroy_cb = pipe_destroy_callback;
     result->source = observable;
     result->base.callback = callback;
-    g_hash_table_insert(observable->subscribers, result, result);
+    observable_subscribe(observable, result);
 
     return (Observable *) result;
 }

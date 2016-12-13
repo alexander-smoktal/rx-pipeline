@@ -78,6 +78,27 @@ int main(int argc, char *argv[])
     Loop *loop = loop_create();
     PipelineManager *manager = pipemanager_create();
 
+    /*
+     * |---------------------|  |-------------|
+     * | Sensor /dev/urandom |  | Timer 100ms |
+     * |---------------------|  |-------------|
+     *    |            \              |
+     *    |             \       |------------------------------|
+     *    |              \----->| Print last value at timeeout |
+     *    |                     |------------------------------|
+     *    |
+     * |-------------------------|  |----------|
+     * | Pack data until timeout |<-| Timer 1s |
+     * |-------------------------|  |----------|
+     *               |
+     * |---------------------------|
+     * | Computer average of batch |
+     * |---------------------------|
+     *               |
+     *     |---------------|
+     *     | Print average |
+     *     |---------------|
+     */
     // Sensor data
     Observable *random_sensor = observable_file_create(loop, "/dev/urandom", sensor_handler);
 
