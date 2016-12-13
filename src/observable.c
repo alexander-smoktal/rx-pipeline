@@ -16,6 +16,10 @@ void observable_init(Observable *observable) {
     }
 }
 
+void observable_deinit(Observable *observable) {
+    g_hash_table_destroy(observable->subscribers);
+}
+
 static void send_to_subscriber(gpointer key, gpointer value, gpointer user_data) {
     Observable *obs = (Observable *) value;
 
@@ -31,6 +35,13 @@ static void send_to_subscriber(gpointer key, gpointer value, gpointer user_data)
 void observable_broadcast(Observable *observable, void *data) {
     if (data) {
         g_hash_table_foreach(observable->subscribers, send_to_subscriber, data);
+    }
+}
+
+void observable_unsubscribe_from(Observable *listener, Observable *subscriber) {
+    g_hash_table_remove(listener->subscribers, subscriber);
+    if (g_hash_table_size(listener->subscribers) == 0) {
+        observable_destroy(listener);
     }
 }
 

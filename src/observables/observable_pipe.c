@@ -5,21 +5,14 @@ typedef struct {
     Observable *source;
 } Pipe;
 
-static void pipe_unsubscribe_from(Observable *listener, Observable *subscriber) {
-    g_hash_table_remove(listener->subscribers, subscriber);
-    if (g_hash_table_size(listener->subscribers) == 0) {
-        observable_destroy(listener);
-    }
-}
-
 static void pipe_destroy_callback(Observable *observable) {
     if (g_hash_table_size(observable->subscribers) == 0) {
+        observable_deinit(observable);
+
         Pipe *pipe = (Pipe *) observable;
         if (pipe->source) {
-            pipe_unsubscribe_from(pipe->source, observable);
+            observable_unsubscribe_from(pipe->source, observable);
         }
-
-        g_hash_table_destroy(observable->subscribers);
     }
 }
 

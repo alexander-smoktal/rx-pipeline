@@ -16,5 +16,7 @@ struct Observable {
 };
 
 void observable_init(Observable *observable);
+void observable_deinit(Observable *observable);
 void observable_broadcast(Observable *observable, void *data);
+void observable_unsubscribe_from(Observable *listener, Observable *subscriber);
 bool observable_destroy(Observable *observable);

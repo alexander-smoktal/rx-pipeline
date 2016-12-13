@@ -30,9 +30,9 @@ static void *right_join_callback(Observable *observable, void *data) {
 
 static void join_destroy_callback(Observable *observable) {
     Join *join = (Join *) observable;
-    g_hash_table_destroy(observable->subscribers);
-    observable_destroy(join->left_source);
-    observable_destroy(join->right_source);
+    observable_deinit(observable);
+    observable_unsubscribe_from(observable, join->left_source);
+    observable_unsubscribe_from(observable, join->right_source);
 }
 
 Observable *observable_join(Observable *left, Observable *right, observable_join_cb callback) {

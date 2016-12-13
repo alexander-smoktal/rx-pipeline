@@ -5,9 +5,9 @@
 #include "log.h"
 #include "utils.h"
 #include "pipeline.h"
-#include "observable_file.h"
-#include "observable_join.h"
-#include "observable_pipe.h"
-#include "observable_timer.h"
+#include "observables/observable_file.h"
+#include "observables/observable_join.h"
+#include "observables/observable_pipe.h"
+#include "observables/observable_timer.h"
 
 #endif // _ATOM_H_

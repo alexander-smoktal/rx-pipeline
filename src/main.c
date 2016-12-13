@@ -9,6 +9,22 @@ static void *sensor_handler(Observable *observable, void *data) {
     return GINT_TO_POINTER(*sensor_data);
 }
 
+static void *take_random_callback(Observable *left, Observable *right, void *data) {
+    static int duration = 0;
+    static int last_value = 0;
+
+    // Data
+    if (left) {
+        last_value = GPOINTER_TO_INT(data);
+        return NULL;
+    // Timer
+    } else {
+        log_error("Value at %d.%d: %d", duration / 10, duration % 10, last_value);
+    }
+
+    ++duration;
+    return NULL;
+}
 
 static void *sum_callback(Observable *left, Observable *right, void *data) {
     static GArray *data_array = NULL;
@@ -23,11 +39,12 @@ static void *sum_callback(Observable *left, Observable *right, void *data) {
         clear = false;
     }
 
+    // Data
     if (left) {
         int value = GPOINTER_TO_INT(data);
-        //log_error("Got value from sensor: %d", value);
         g_array_append_val(data_array, value);
         return NULL;
+    // Timer
     } else {
         clear = true;
         return data_array;
@@ -61,16 +78,25 @@ int main(int argc, char *argv[])
     Loop *loop = loop_create();
     PipelineManager *manager = pipemanager_create();
 
+    // Sensor data
+    Observable *random_sensor = observable_file_create(loop, "/dev/urandom", sensor_handler);
+
+    // Prints element every 100ms
+    Observable *every_100_ms_printer = observable_join(random_sensor,
+                                       observable_timer_create(loop, 100, NULL),
+                                       take_random_callback);
+
     // Group elements for each second
-    Observable *join = observable_join(observable_file_create(loop, "/dev/urandom", sensor_handler),
+    Observable *each_1_second_grouper = observable_join(random_sensor,
                                        observable_timer_create(loop, 1000, NULL),
                                        sum_callback);
     // Returns average for every group
-    Observable *average = observable_pipe_create(join, average_terminator);
-    // Prints int value
-    Observable *printer = observable_pipe_create(average, int_logger);
+    Observable *average = observable_pipe_create(each_1_second_grouper, average_terminator);
+    // Prints average
+    Observable *average_printer = observable_pipe_create(average, int_logger);
 
-    pipemanager_add_pipeline(manager, printer);
+    pipemanager_add_pipeline(manager, every_100_ms_printer);
+    pipemanager_add_pipeline(manager, average_printer);
 
     (void) loop_run(loop);
     loop_close(loop);

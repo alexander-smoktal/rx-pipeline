@@ -1,6 +1,6 @@
 #include "observable_file.h"
 
-#include "log.h"
+#include "../common.h"
 
 typedef struct {
     Observable base;
@@ -10,15 +10,17 @@ typedef struct {
 } File;
 
 static void file_destroy_callback(Observable *observable) {
-    g_hash_table_destroy(observable->subscribers);
+    if (observable) {
+        observable_deinit(observable);
 
-    File *file = (File *) observable;
-    uv_fs_t close_req;
-    uv_fs_close(file->open_req.loop, &close_req, file->open_req.file, NULL);
-    uv_fs_req_cleanup(&file->open_req);
-    uv_fs_req_cleanup(&file->read_req);
+        File *file = (File *) observable;
+        uv_fs_t close_req;
+        uv_fs_close(file->open_req.loop, &close_req, file->open_req.file, NULL);
+        uv_fs_req_cleanup(&file->open_req);
+        uv_fs_req_cleanup(&file->read_req);
 
-    free(file);
+        free(file);
+    }
 }
 
 static void libuv_file_read_callback(uv_fs_t *req) {
@@ -58,6 +60,9 @@ static void libuv_file_open_callback(uv_fs_t *req) {
 }
 
 Observable *observable_file_create(Loop *loop, const char *path, observable_cb callback) {
+    CHECK_NULL_RETURN(loop, NULL);
+    CHECK_NULL_RETURN(path, NULL);
+
     File *result = malloc(sizeof(File));
     result->iov.base = (char *) result->buffer;
     result->iov.len = sizeof(result->buffer);

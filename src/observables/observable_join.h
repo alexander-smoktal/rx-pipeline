@@ -1,6 +1,6 @@
 #pragma once
 
-#include "observable.h"
+#include "../observable.h"
 
 typedef void *(*observable_join_cb)(Observable *left, Observable *right, void *data);
 

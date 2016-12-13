@@ -7,7 +7,7 @@ typedef struct {
 } Timer;
 
 static void timer_destroy_callback(Observable *observable) {
-    g_hash_table_destroy(observable->subscribers);
+    observable_deinit(observable);
 
     Timer *timer = (Timer *) observable;
     uv_timer_stop(timer->timer);

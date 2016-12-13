@@ -4,10 +4,10 @@ set(SRC_LIST
     loop.c
     main.c
     observable.c
-    observable_file.c
-    observable_pipe.c
-    observable_join.c
-    observable_timer.c
+    observables/observable_file.c
+    observables/observable_pipe.c
+    observables/observable_join.c
+    observables/observable_timer.c
     pipeline.c
     utils.c)
 
