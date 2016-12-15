@@ -11,5 +11,8 @@ set(SRC_LIST
     pipeline.c
     utils.c)
 
+# For tests
+set(ATOM_SOURCES ${SRC_LIST} PARENT_SCOPE)
+
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 target_link_libraries(${PROJECT_NAME} ${GLIB2_LIBRARIES} uv)
