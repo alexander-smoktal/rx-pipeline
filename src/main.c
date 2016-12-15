@@ -35,7 +35,7 @@ static void *sum_callback(Observable *left, Observable *right, void *data) {
     }
 
     if (clear) {
-        g_array_free(data_array, false);
+        g_array_set_size (data_array, 0);
         clear = false;
     }
 
