@@ -39,7 +39,7 @@ void observable_broadcast(Observable *observable, void *data) {
 }
 
 void observable_subscribe(Observable *listener, Observable *subscriber) {
-    g_hash_table_insert(listener->subscribers, subscriber, subscriber);
+    g_hash_table_add(listener->subscribers, subscriber);
 }
 
 void observable_unsubscribe(Observable *listener, Observable *subscriber) {
