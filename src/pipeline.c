@@ -13,8 +13,8 @@ static void observable_destroy_gwrapper(gpointer data) {
 PipelineManager *pipemanager_create() {
     PipelineManager *result = malloc(sizeof(PipelineManager));
     result ->pipelines = g_hash_table_new_full(g_direct_hash, g_direct_equal,
-                                               NULL,
-                                               observable_destroy_gwrapper);
+                         NULL,
+                         observable_destroy_gwrapper);
     return result;
 }
 
@@ -23,12 +23,13 @@ void pipemanager_add_pipeline(PipelineManager *manager, Observable *pipe) {
 }
 
 void pipemanager_make_pipeline(PipelineManager *manager,
-                                 Observable *source,
-                                 unsigned int pipecount, ...) {
+                               Observable *source,
+                               unsigned int pipecount, ...) {
     va_list arglist;
     Observable *pipe = source;
 
     va_start(arglist, pipecount);
+
     for (unsigned int i = 0; i < pipecount; ++i) {
         pipe = observable_map_create(pipe, va_arg(arglist, observable_cb));
     }

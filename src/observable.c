@@ -9,8 +9,8 @@ static void observable_destroy_gwrapper(gpointer data) {
 void observable_init(Observable *observable) {
     if (observable) {
         observable->subscribers = g_hash_table_new_full(g_direct_hash, g_direct_equal,
-                                                    NULL,
-                                                    observable_destroy_gwrapper);
+                                  NULL,
+                                  observable_destroy_gwrapper);
         observable->destroy_cb = NULL;
         observable->data = NULL;
     }
@@ -26,6 +26,7 @@ static void send_to_subscriber(gpointer key, gpointer value, gpointer user_data)
     if (obs->callback && user_data) {
         // If result of our callback non-NULL, broadcast to subscribers.
         void *result = obs->callback(obs, user_data);
+
         if (result) {
             observable_broadcast(obs, result);
         }
@@ -44,6 +45,7 @@ void observable_subscribe(Observable *listener, Observable *subscriber) {
 
 void observable_unsubscribe(Observable *listener, Observable *subscriber) {
     g_hash_table_remove(listener->subscribers, subscriber);
+
     if (g_hash_table_size(listener->subscribers) == 0) {
         observable_destroy(listener);
     }
