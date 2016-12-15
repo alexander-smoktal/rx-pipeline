@@ -8,6 +8,7 @@ set(SRC_LIST
     observables/observable_map.c
     observables/observable_join.c
     observables/observable_timer.c
+    observables/observable_udp_socket.c
     pipeline.c
     utils.c)
 

@@ -9,5 +9,6 @@
 #include "observables/observable_join.h"
 #include "observables/observable_map.h"
 #include "observables/observable_timer.h"
+#include "observables/observable_udp_socket.h"
 
 #endif // _ATOM_H_

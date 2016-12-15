@@ -3,6 +3,12 @@
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 
+static void *udp_socket_handler(Observable *observable, void *data) {
+	// BEWARE: data may point not to null-terminated string.
+	log_error("udp_sensor_handler: data: '%s'\n", (char *)data);
+    return NULL;
+}
+
 static void *sensor_handler(Observable *observable, void *data) {
     int *sensor_data = (int *) data;
 
@@ -101,6 +107,10 @@ int main(int argc, char *argv[])
      */
     // Sensor data
     Observable *random_sensor = observable_file_create(loop, "/dev/urandom", sensor_handler);
+
+	// UDP socket sensor
+	Observable *udp_socket = observable_udp_socket_create(loop, 3000, udp_socket_handler);
+
 
     // Prints element every 100ms
     Observable *every_100_ms_printer = observable_join(random_sensor,
