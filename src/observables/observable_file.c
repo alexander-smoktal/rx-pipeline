@@ -30,12 +30,13 @@ static void libuv_file_read_callback(uv_fs_t *req) {
     // Got some data
     if (req->result > 0) {
         void *data = observable->callback(observable, file->buffer);
+
         if (data) {
             observable_broadcast(observable, data);
         }
 
         uv_fs_read(req->loop, &file->read_req, file->open_req.result, &file->iov, 1, -1, libuv_file_read_callback);
-    // EOF or Error
+        // EOF or Error
     } else {
         observable->callback(observable, GINT_TO_POINTER(0xE0D));
         file_destroy_callback(observable);
@@ -49,8 +50,7 @@ static void libuv_file_open_callback(uv_fs_t *req) {
 
     if (req->result >= 0) {
         uv_fs_read(req->loop, &observable->read_req, req->result, &observable->iov, 1, -1, libuv_file_read_callback);
-    }
-    else {
+    } else {
         log_error("Failed to open a file '%s' due to: %s", req->path, uv_strerror(req->result));
 
         Observable *obs_to_pass = (Observable *) observable;
@@ -74,6 +74,7 @@ Observable *observable_file_create(Loop *loop, const char *path, observable_cb c
     result->base.callback = callback;
 
     int uv_res = uv_fs_open(loop->loop, &result->open_req, path, O_RDONLY, 0, libuv_file_open_callback);
+
     if (uv_res >= 0) {
         return (Observable *) result;
     }

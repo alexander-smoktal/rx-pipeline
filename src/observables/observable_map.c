@@ -10,6 +10,7 @@ static void map_destroy_callback(Observable *observable) {
         observable_deinit(observable);
 
         Map *map = (Map *) observable;
+
         if (map->source) {
             observable_unsubscribe(map->source, observable);
         }
