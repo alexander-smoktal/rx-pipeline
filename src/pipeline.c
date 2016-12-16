@@ -2,8 +2,12 @@
 
 #include "atom.h"
 
+/**
+ * @brief Pipeline manager. Can be used to store and search
+ *        pipelines for given constraints
+ */
 struct PipelineManager {
-    GHashTable *pipelines;
+    GHashTable *pipelines; /**< Active pipelines */
 };
 
 static void observable_destroy_gwrapper(gpointer data) {

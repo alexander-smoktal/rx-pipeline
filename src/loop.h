@@ -6,7 +6,7 @@
  * @brief The Loop struct. Loop abstraction above Libuv loop.
  */
 typedef struct {
-    uv_loop_t *loop;      // Internal Libuv loop
+    uv_loop_t *loop;  /**< Libuv loop handle */
 } Loop;
 
 /**

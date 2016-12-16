@@ -1,3 +1,9 @@
+/**
+ * @file observable_timer.h
+ * @date 16 Dec 2016
+ * @brief Timer observable
+ */
+
 #pragma once
 
 #include "../loop.h"

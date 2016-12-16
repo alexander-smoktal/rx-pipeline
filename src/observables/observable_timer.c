@@ -2,13 +2,11 @@
 #include "observable_timer.h"
 
 /**
- * Timer Timer observable
- * base Parent struct
- * timer Libuv timer handle
+ * @brief Timer observable
  */
 typedef struct {
-    Observable base;
-    uv_timer_t *timer;
+    Observable base;    /**< Parent observable structure */
+    uv_timer_t *timer;  /**< Libuv timer handle */
 } Timer;
 
 void libuv_close_callback(uv_handle_t* handle) {

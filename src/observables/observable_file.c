@@ -3,16 +3,13 @@
 #include "../common.h"
 
 /**
- * File File observervable
- * base Base struct
- * open_req Libuv open request handle
- * read_req Libuv read request handle
- * iov Buffer to pass for reading
+ * @brief File observervable
  */
 typedef struct {
-    Observable base;
-    uv_fs_t open_req, read_req;
-    uv_buf_t iov;
+    Observable base;   /**< Parent observable structure */
+    uv_fs_t open_req;  /**< Libuv open request handle */
+    uv_fs_t read_req;  /**< Libuv read request handle */
+    uv_buf_t iov;      /**< Libuv buffer to pass for reading */
 } File;
 
 static void libuv_file_close_callback(uv_fs_t *req) {

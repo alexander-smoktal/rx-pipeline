@@ -1,3 +1,9 @@
+/**
+ * @file observable_file.h
+ * @date 16 Dec 2016
+ * @brief File observable
+ */
+
 #pragma once
 
 #include "../loop.h"
