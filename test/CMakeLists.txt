@@ -2,7 +2,7 @@
 # First let's make object library from atom sources, to test
 list(REMOVE_ITEM ATOM_SOURCES main.c)
 foreach(SOURCE ${ATOM_SOURCES})
-    set(OBJECT_SOURCES "../src/" ${OBJECT_SOURCES})
+    set(OBJECT_SOURCES "../src/${SOURCE}" ${OBJECT_SOURCES})
 endforeach()
 add_library(atom_object_library OBJECT ${OBJECT_SOURCES})
 

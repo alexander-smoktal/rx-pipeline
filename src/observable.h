@@ -15,6 +15,8 @@ struct Observable {
     void *data;
 };
 
+void *end_of_data();
+
 void observable_init(Observable *observable);
 void observable_deinit(Observable *observable);
 void observable_broadcast(Observable *observable, void *data);

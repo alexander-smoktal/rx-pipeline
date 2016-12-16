@@ -6,7 +6,6 @@ typedef struct {
     Observable base;
     uv_fs_t open_req, read_req;
     uv_buf_t iov;
-    int buffer[1];
 } File;
 
 static void file_destroy_callback(Observable *observable) {
@@ -14,6 +13,7 @@ static void file_destroy_callback(Observable *observable) {
         observable_deinit(observable);
 
         File *file = (File *) observable;
+        free(file->iov.base);
         uv_fs_t close_req;
         uv_fs_close(file->open_req.loop, &close_req, file->open_req.file, NULL);
         uv_fs_req_cleanup(&file->open_req);
@@ -24,48 +24,48 @@ static void file_destroy_callback(Observable *observable) {
 }
 
 static void libuv_file_read_callback(uv_fs_t *req) {
-    Observable *observable = (Observable *) req->data;
-    File *file = (File *) observable;
+    File *file = (File *) req->data;
 
     // Got some data
     if (req->result > 0) {
-        void *data = observable->callback(observable, file->buffer);
+        void *data = file->base.callback(&file->base, file->iov.base);
 
         if (data) {
-            observable_broadcast(observable, data);
+            observable_broadcast(&file->base, data);
         }
 
         uv_fs_read(req->loop, &file->read_req, file->open_req.result, &file->iov, 1, -1, libuv_file_read_callback);
         // EOF or Error
     } else {
-        observable->callback(observable, GINT_TO_POINTER(0xE0D));
-        file_destroy_callback(observable);
+        file->base.callback(&file->base, end_of_data());
+        file_destroy_callback(&file->base);
 
-        log_error("File %s EOF or error: %s", req->path, uv_strerror(req->result));
+        if (req->result < 0) {
+            log_error("File %s EOF or error: %s", req->path, uv_strerror(req->result));
+        }
     }
 }
 
 static void libuv_file_open_callback(uv_fs_t *req) {
-    File *observable = (File *) req->data;
+    File *file = (File *) req->data;
 
     if (req->result >= 0) {
-        uv_fs_read(req->loop, &observable->read_req, req->result, &observable->iov, 1, -1, libuv_file_read_callback);
+        uv_fs_read(req->loop, &file->read_req, req->result, &file->iov, 1, -1, libuv_file_read_callback);
     } else {
         log_error("Failed to open a file '%s' due to: %s", req->path, uv_strerror(req->result));
 
-        Observable *obs_to_pass = (Observable *) observable;
-        obs_to_pass->callback(obs_to_pass, GINT_TO_POINTER(0xBAADF00D));
-        file_destroy_callback(obs_to_pass);
+        file->base.callback(&file->base, GINT_TO_POINTER(0xBAADF00D));
+        file_destroy_callback(&file->base);
     }
 }
 
-Observable *observable_file_create(Loop *loop, const char *path, observable_cb callback) {
+Observable *observable_file_create(Loop *loop, const char *path, size_t buffer_size, observable_cb callback) {
     CHECK_NULL_RETURN(loop, NULL);
     CHECK_NULL_RETURN(path, NULL);
 
     File *result = malloc(sizeof(File));
-    result->iov.base = (char *) result->buffer;
-    result->iov.len = sizeof(result->buffer);
+    result->iov.base = malloc(buffer_size);
+    result->iov.len = buffer_size;
     result->open_req.data = result;
     result->read_req.data = result;
 

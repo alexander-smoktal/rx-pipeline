@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
      *     |---------------|
      */
     // Sensor data
-    Observable *random_sensor = observable_file_create(loop, "/dev/urandom", sensor_handler);
+    Observable *random_sensor = observable_file_create(loop, "/dev/urandom", sizeof(int), sensor_handler);
 
     // UDP socket sensor
     Observable *udp_socket = observable_udp_socket_create(loop, 3000, udp_socket_handler);
