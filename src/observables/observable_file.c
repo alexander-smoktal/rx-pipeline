@@ -8,19 +8,25 @@ typedef struct {
     uv_buf_t iov;
 } File;
 
-static void file_destroy_callback(Observable *observable) {
-    if (observable) {
-        observable_deinit(observable);
+static void libuv_file_close_callback(uv_fs_t *req) {
+        File *file = (File *) req->data;
 
-        File *file = (File *) observable;
-        free(file->iov.base);
-        uv_fs_t close_req;
-        uv_fs_close(file->open_req.loop, &close_req, file->open_req.file, NULL);
+        observable_deinit(&file->base);
         uv_fs_req_cleanup(&file->open_req);
         uv_fs_req_cleanup(&file->read_req);
+        free(file->iov.base);
 
+        uv_fs_req_cleanup(req);
+        free(req);
         free(file);
-    }
+}
+
+static void file_destroy_callback(Observable *observable) {
+    File *file = (File *) observable;
+    uv_fs_t *close_req = malloc(sizeof(uv_fs_t));
+    close_req->data = observable;
+
+    uv_fs_close(file->open_req.loop, close_req, file->open_req.file, libuv_file_close_callback);
 }
 
 static void libuv_file_read_callback(uv_fs_t *req) {
@@ -37,12 +43,12 @@ static void libuv_file_read_callback(uv_fs_t *req) {
         uv_fs_read(req->loop, &file->read_req, file->open_req.result, &file->iov, 1, -1, libuv_file_read_callback);
         // EOF or Error
     } else {
-        file->base.callback(&file->base, end_of_data());
-        file_destroy_callback(&file->base);
-
         if (req->result < 0) {
             log_error("File %s EOF or error: %s", req->path, uv_strerror(req->result));
         }
+
+        file->base.callback(&file->base, end_of_data());
+        file_destroy_callback(&file->base);
     }
 }
 

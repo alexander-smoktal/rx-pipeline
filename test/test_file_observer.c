@@ -25,9 +25,11 @@ static void test_file_observer() {
     g_assert(write(fd, data, sizeof(data)));
     close(fd);
 
+    // Create loop read
     Loop *loop = loop_create();
     (void) observable_file_create(loop, tmp_template, sizeof(int), file_observable_callback);
     loop_run(loop);
+    loop_close(loop);
 
     g_assert_cmpint(read_result[0], ==, data[0]);
     g_assert_cmpint(read_result[1], ==, data[1]);
