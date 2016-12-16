@@ -2,6 +2,13 @@
 
 #include "../common.h"
 
+/**
+ * File File observervable
+ * base Base struct
+ * open_req Libuv open request handle
+ * read_req Libuv read request handle
+ * iov Buffer to pass for reading
+ */
 typedef struct {
     Observable base;
     uv_fs_t open_req, read_req;

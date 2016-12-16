@@ -1,22 +1,35 @@
 
 #include "observable_timer.h"
 
+/**
+ * Timer Timer observable
+ * base Parent struct
+ * timer Libuv timer handle
+ */
 typedef struct {
     Observable base;
     uv_timer_t *timer;
 } Timer;
 
-static void timer_destroy_callback(Observable *observable) {
-    observable_deinit(observable);
+void libuv_close_callback(uv_handle_t* handle) {
+    Timer *timer = (Timer *) handle->data;
 
-    Timer *timer = (Timer *) observable;
-    uv_timer_stop(timer->timer);
+    observable_deinit(&timer->base);
+    free(timer->timer);
     free(timer);
+}
+
+static void timer_destroy_callback(Observable *observable) {
+    Timer *timer = (Timer *) observable;
+
+    uv_timer_stop(timer->timer);
+    uv_close((uv_handle_t *) timer->timer, libuv_close_callback);
 }
 
 static void libuv_timer_callback(uv_timer_t *handle) {
     Observable *observable = (Observable *) handle->data;
 
+    // Timer doesn't produce any meaningful data. Push a magic value
     observable_broadcast(observable, GINT_TO_POINTER(0xBAADF00D));
 }
 

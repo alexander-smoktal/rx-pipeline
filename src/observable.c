@@ -9,15 +9,11 @@ void *end_of_data() {
     return EOD;
 }
 
-static void observable_destroy_gwrapper(gpointer data) {
-    observable_destroy((Observable *) data);
-}
-
 void observable_init(Observable *observable) {
     if (observable) {
         observable->subscribers = g_hash_table_new_full(g_direct_hash, g_direct_equal,
                                   NULL,
-                                  observable_destroy_gwrapper);
+                                  NULL);
         observable->destroy_cb = NULL;
         observable->data = NULL;
     }
@@ -27,7 +23,7 @@ void observable_deinit(Observable *observable) {
     g_hash_table_destroy(observable->subscribers);
 }
 
-static void send_to_subscriber(gpointer key, gpointer value, gpointer user_data) {
+static void send_to_subscriber(/*gpointer key,*/ gpointer value, gpointer user_data) {
     Observable *obs = (Observable *) value;
 
     if (obs->callback && user_data) {
@@ -42,7 +38,11 @@ static void send_to_subscriber(gpointer key, gpointer value, gpointer user_data)
 
 void observable_broadcast(Observable *observable, void *data) {
     if (data) {
-        g_hash_table_foreach(observable->subscribers, send_to_subscriber, data);
+        // We may destroy observive inside a callback and this changes subscriber
+        // hashtable layout, so to iterate we have to use list of keys
+        GList *subscribers = g_hash_table_get_keys(observable->subscribers);
+        g_list_foreach(subscribers, send_to_subscriber, data);
+        g_list_free(subscribers);
     }
 }
 

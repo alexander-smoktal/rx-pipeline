@@ -3,7 +3,8 @@
 
 Loop *loop_create() {
     Loop *result = malloc(sizeof(Loop));
-    result->loop = uv_loop_new();
+    result->loop = malloc(sizeof(uv_loop_t));
+    uv_loop_init(result->loop);
 
     return result;
 }
@@ -16,8 +17,11 @@ bool loop_run(Loop *loop) {
 
 void loop_close(Loop *loop) {
     if (loop) {
-        uv_stop(loop->loop);
-        uv_loop_delete(loop->loop);
+        int uv_ret = uv_loop_close(loop->loop);
+        if (uv_ret == UV_EBUSY) {
+            log_error("Trying to close loop with handlers");
+        }
+        free(loop->loop);
         free(loop);
     }
 }
