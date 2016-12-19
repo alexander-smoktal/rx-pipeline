@@ -1,9 +1,8 @@
 
 #include "observable.h"
-#include "utils.h"
 
 // Eond of data
-static void* EOD = GINT_TO_POINTER(0xE0D);
+static void* EOD = INT_TO_POINTER(0xE0D);
 
 void *end_of_data() {
     return EOD;
@@ -11,57 +10,62 @@ void *end_of_data() {
 
 void observable_init(Observable *observable) {
     if (observable) {
-        observable->subscribers = g_hash_table_new_full(g_direct_hash, g_direct_equal,
-                                  NULL,
-                                  NULL);
+        observable->subscribers = kh_init(ptr_hash_map);
         observable->destroy_cb = NULL;
         observable->data = NULL;
     }
 }
 
 void observable_deinit(Observable *observable) {
-    g_hash_table_destroy(observable->subscribers);
+    kh_destroy(ptr_hash_map, observable->subscribers);
 }
 
-static void send_to_subscriber(/*gpointer key,*/ gpointer value, gpointer user_data) {
-    Observable *obs = (Observable *) value;
-
-    if (obs->callback && user_data) {
+static inline void send_to_subscriber(Observable *observable, void *data) {
+    if (observable->callback && data) {
         // If result of our callback non-NULL, broadcast to subscribers.
-        void *result = obs->callback(obs, user_data);
+        void *result = observable->callback(observable, data);
 
         if (result) {
-            observable_broadcast(obs, result);
+            observable_broadcast(observable, result);
         }
     }
 }
 
 void observable_broadcast(Observable *observable, void *data) {
     if (data) {
-        // We may destroy observive inside a callback and this changes subscriber
-        // hashtable layout, so to iterate we have to use list of keys
-        GList *subscribers = g_hash_table_get_keys(observable->subscribers);
-        g_list_foreach(subscribers, send_to_subscriber, data);
-        g_list_free(subscribers);
+        Observable *current_subscriber = NULL;
+        kh_foreach_value(observable->subscribers, current_subscriber, {
+                            send_to_subscriber(current_subscriber, data);
+                         });
     }
 }
 
 void observable_subscribe(Observable *listener, Observable *subscriber) {
-    g_hash_table_add(listener->subscribers, subscriber);
+    int khash_res;
+    unsigned int key_iter = kh_put(ptr_hash_map, listener->subscribers, POINTER_TO_INT(subscriber), &khash_res);
+    kh_val(listener->subscribers, key_iter) = subscriber;
 }
 
 void observable_unsubscribe(Observable *listener, Observable *subscriber) {
-    g_hash_table_remove(listener->subscribers, subscriber);
+    unsigned int key_iter = kh_get(ptr_hash_map, listener->subscribers, POINTER_TO_INT(subscriber));
 
-    if (g_hash_table_size(listener->subscribers) == 0) {
-        observable_destroy(listener);
+    if (key_iter == kh_end(listener->subscribers)) {
+        log_warning("Unknown subscriber is trying to unsubscribe");
+    } else {
+        kh_del(ptr_hash_map, listener->subscribers, key_iter);
+
+        if (kh_size(listener->subscribers) == 0) {
+            observable_destroy(listener);
+        }
     }
 }
 
 bool observable_destroy(Observable *observable) {
     CHECK_NULL_RETURN(observable, false);
 
-    if (g_hash_table_size(observable->subscribers) == 0) {
+    // If we still have subscribers, don't delete observable.
+    // It will be deleted, once last subscriber unsubscribe.
+    if (kh_size(observable->subscribers) == 0) {
         observable->destroy_cb(observable);
         return true;
     }

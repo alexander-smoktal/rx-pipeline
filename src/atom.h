@@ -3,7 +3,7 @@
 
 #include "loop.h"
 #include "log.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include "pipeline.h"
 #include "observables/observable_file.h"
 #include "observables/observable_join.h"

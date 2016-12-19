@@ -7,23 +7,22 @@
  *        pipelines for given constraints
  */
 struct PipelineManager {
-    GHashTable *pipelines; /**< Active pipelines */
+    khash_t(ptr_hash_map) *pipelines; /**< Active pipelines */
 };
-
-static void observable_destroy_gwrapper(gpointer data) {
-    observable_destroy((Observable *) data);
-}
 
 PipelineManager *pipemanager_create() {
     PipelineManager *result = malloc(sizeof(PipelineManager));
-    result ->pipelines = g_hash_table_new_full(g_direct_hash, g_direct_equal,
-                         NULL,
-                         observable_destroy_gwrapper);
+
+    result->pipelines = kh_init(ptr_hash_map);
+
     return result;
 }
 
-void pipemanager_add_pipeline(PipelineManager *manager, Observable *pipe) {
-    g_hash_table_insert(manager->pipelines, pipe, pipe);
+void pipemanager_add_pipeline(PipelineManager *manager, Observable *pipe, int id) {
+    int khash_res;
+
+    unsigned int key_iter = kh_put(ptr_hash_map, manager->pipelines, id, &khash_res);
+    kh_val(manager->pipelines, key_iter) = manager;
 }
 
 void pipemanager_make_pipeline(PipelineManager *manager,
@@ -38,10 +37,13 @@ void pipemanager_make_pipeline(PipelineManager *manager,
         pipe = observable_map_create(pipe, va_arg(arglist, observable_cb));
     }
 
-    g_hash_table_insert(manager->pipelines, pipe, pipe);
+    pipemanager_add_pipeline(manager, pipe, POINTER_TO_INT(pipe));
 }
 
 void pipemanager_destroy(PipelineManager *manager) {
-    g_hash_table_destroy(manager->pipelines);
+    Observable *current_pipe = NULL;
+    kh_foreach_value(manager->pipelines, current_pipe, {
+                        observable_destroy(current_pipe);
+                     });
 }
 
