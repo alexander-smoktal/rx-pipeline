@@ -14,19 +14,19 @@ typedef struct {
 
 
 static void *left_join_callback(Observable *observable, void *data) {
-    Observable *join_point = (Observable *) observable->data;
+    Join *join_point = (Join *) observable->data;
 
-    void *result = ((Join *)join_point)->callback(join_point, NULL, data);
-    observable_broadcast(join_point, result);
+    void *result = join_point->callback(&join_point->base, NULL, data);
+    observable_broadcast(&join_point->base, result);
 
     return NULL;
 }
 
 static void *right_join_callback(Observable *observable, void *data) {
-    Observable *join_point = (Observable *) observable->data;
+    Join *join_point = (Join *) observable->data;
 
-    void *result = ((Join *)join_point)->callback(NULL, join_point, data);
-    observable_broadcast(join_point, result);
+    void *result = join_point->callback(NULL, &join_point->base, data);
+    observable_broadcast(&join_point->base, result);
 
     return NULL;
 }
@@ -52,11 +52,11 @@ Observable *observable_join(Observable *left, Observable *right, observable_join
 
     result->left_source = observable_map_create(left, left_join_callback);
     result->left_source->data = result;
-    observable_subscribe(result->left_source, (Observable *) result);
+    observable_subscribe(result->left_source, &result->base);
 
     result->right_source = observable_map_create(right, right_join_callback);
     result->right_source->data = result;
-    observable_subscribe(result->right_source, (Observable *) result);
+    observable_subscribe(result->right_source, &result->base);
 
     return (Observable *) result;
 }
