@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
     Observable *random_sensor = observable_file_create(loop, "/dev/urandom", sizeof(int), sensor_handler);
 
     // UDP socket sensor
-    Observable *udp_socket = observable_udp_socket_create(loop, 3000, udp_socket_handler);
+    observable_udp_socket_create(loop, 3000, udp_socket_handler);
 
 
     // Prints element every 100ms
