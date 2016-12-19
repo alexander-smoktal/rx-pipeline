@@ -2,11 +2,14 @@
 
 #include "observable_map.h"
 
+/**
+ * @brief Observable join
+ */
 typedef struct {
-    Observable base;
-    Observable *left_source;
-    Observable *right_source;
-    observable_join_cb callback;
+    Observable base;             /**< Parent observable structure */
+    Observable *left_source;     /**< Left Observable to join */
+    Observable *right_source;    /**< Right Observable to join */
+    observable_join_cb callback; /**< Callback, which joins data */
 } Join;
 
 
