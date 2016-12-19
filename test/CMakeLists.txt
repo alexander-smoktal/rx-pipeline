@@ -4,6 +4,8 @@ list(REMOVE_ITEM ATOM_SOURCES main.c)
 foreach(SOURCE ${ATOM_SOURCES})
     set(OBJECT_SOURCES "../src/${SOURCE}" ${OBJECT_SOURCES})
 endforeach()
+# Add utils
+list(APPEND OBJECT_SOURCES "utils.c")
 add_library(atom_object_library OBJECT ${OBJECT_SOURCES})
 
 include_directories(../src)
