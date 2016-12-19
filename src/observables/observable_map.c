@@ -1,8 +1,11 @@
 #include "observable_map.h"
 
+/**
+ * @brief Observable map
+ */
 typedef struct {
-    Observable base;
-    Observable *source;
+    Observable base;    /**< Parent observable structure */
+    Observable *source; /**< Source Observable to map */
 } Map;
 
 static void map_destroy_callback(Observable *observable) {

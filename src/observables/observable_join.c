@@ -2,37 +2,42 @@
 
 #include "observable_map.h"
 
+/**
+ * @brief Observable join
+ */
 typedef struct {
-    Observable base;
-    Observable *left_source;
-    Observable *right_source;
-    observable_join_cb callback;
+    Observable base;             /**< Parent observable structure */
+    Observable *left_source;     /**< Left Observable to join */
+    Observable *right_source;    /**< Right Observable to join */
+    observable_join_cb callback; /**< Callback, which joins data */
 } Join;
 
 
 static void *left_join_callback(Observable *observable, void *data) {
-    Observable *join_point = (Observable *) observable->data;
+    Join *join_point = (Join *) observable->data;
 
-    void *result = ((Join *)join_point)->callback(join_point, NULL, data);
-    observable_broadcast(join_point, result);
+    void *result = join_point->callback(&join_point->base, NULL, data);
+    observable_broadcast(&join_point->base, result);
 
     return NULL;
 }
 
 static void *right_join_callback(Observable *observable, void *data) {
-    Observable *join_point = (Observable *) observable->data;
+    Join *join_point = (Join *) observable->data;
 
-    void *result = ((Join *)join_point)->callback(NULL, join_point, data);
-    observable_broadcast(join_point, result);
+    void *result = join_point->callback(NULL, &join_point->base, data);
+    observable_broadcast(&join_point->base, result);
 
     return NULL;
 }
 
 static void join_destroy_callback(Observable *observable) {
     Join *join = (Join *) observable;
+    observable_unsubscribe(join->left_source, observable);
+    observable_unsubscribe(join->right_source, observable);
     observable_deinit(observable);
-    observable_unsubscribe(observable, join->left_source);
-    observable_unsubscribe(observable, join->right_source);
+
+    free(join);
 }
 
 Observable *observable_join(Observable *left, Observable *right, observable_join_cb callback) {
@@ -47,11 +52,11 @@ Observable *observable_join(Observable *left, Observable *right, observable_join
 
     result->left_source = observable_map_create(left, left_join_callback);
     result->left_source->data = result;
-    observable_subscribe(result->left_source, (Observable *) result);
+    observable_subscribe(result->left_source, &result->base);
 
     result->right_source = observable_map_create(right, right_join_callback);
     result->right_source->data = result;
-    observable_subscribe(result->right_source, (Observable *) result);
+    observable_subscribe(result->right_source, &result->base);
 
     return (Observable *) result;
 }
