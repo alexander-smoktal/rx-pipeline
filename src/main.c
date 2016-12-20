@@ -1,64 +1,36 @@
 #include "atom.h"
 #include "common.h"
 
-static void *udp_socket_handler(Observable *observable, void *data) {
-    // BEWARE: data may point not to null-terminated string.
-    if (data && data != end_of_data()) {
-        log_error("udp_sensor_handler: data: '%s'\n", (char *)data);
-    }
-    return data;
-}
-
-static void *sensor_handler(Observable *observable, void *data) {
-    int *sensor_data = (int *) data;
-
-    return INT_TO_POINTER(*sensor_data);
-}
-
-static void *take_random_callback(Observable *left, Observable *right, void *data) {
-    static int duration = 0;
-    static int last_value = 0;
-
-    // Data
-    if (left) {
-        last_value = POINTER_TO_INT(data);
-        return NULL;
-        // Timer
-    } else {
-        log_error("Value at %d.%d: %d", duration / 10, duration % 10, last_value);
-    }
-
-    ++duration;
-    return NULL;
-}
+#include "unistd.h"
+#include "time.h"
 
 typedef kvec_t(int) k_int_vec;
 
-static void *sum_callback(Observable *left, Observable *right, void *data) {
+static void *random_data_generator() {
+    usleep(100e3);
+
+    return INT_TO_POINTER(rand());
+}
+
+static void *pack_10_callback(Observable *source, void *data) {
     static k_int_vec *data_array = NULL;
-    static bool clear = false;
 
     if (!data_array) {
         data_array = calloc(sizeof(k_int_vec), 1);
     }
 
-    if (clear) {
+    if (kv_size(*data_array) == 10) {
         kv_clear(*data_array);
-        clear = false;
     }
 
-    // Data
-    if (left) {
-        int value = POINTER_TO_INT(data);
-        kv_push(int, *data_array, value);
-        return NULL;
-        // Timer
-    } else {
-        clear = true;
+    int value = POINTER_TO_INT(data);
+    kv_push(int, *data_array, value);
+
+    if (kv_size(*data_array) == 10) {
         return data_array;
+    } else {
+        return NULL;
     }
-
-    return NULL;
 }
 
 static void *average_terminator(Observable *observable, void *data) {
@@ -84,22 +56,16 @@ int main(int argc, char *argv[]) {
     srand(time(NULL));
     log_init();
 
-#ifdef ENABLE_LIBUV
-    Loop *loop = loop_create();
     PipelineManager *manager = pipemanager_create();
 
     /*
-     * |---------------------|  |-------------|
-     * | Sensor /dev/urandom |  | Timer 100ms |
-     * |---------------------|  |-------------|
-     *    |            \              |
-     *    |             \       |------------------------------|
-     *    |              \----->| Print last value at timeeout |
-     *    |                     |------------------------------|
-     *    |
-     * |-------------------------|  |----------|
-     * | Pack data until timeout |<-| Timer 1s |
-     * |-------------------------|  |----------|
+     * |---------------------|
+     * | Random 100ms sensor |
+     * |---------------------|
+     *               |
+     * |-------------------------|
+     * | Pack data of 10         |
+     * |-------------------------|
      *               |
      * |---------------------------|
      * | Computer average of batch |
@@ -110,28 +76,21 @@ int main(int argc, char *argv[]) {
      *     |---------------|
      */
     // Sensor data
-    Observable *random_sensor = observable_file_create(loop, "/dev/urandom", sizeof(int), sensor_handler);
+    Observable *random_sensor = observable_generator_create(random_data_generator);
 
-    // Prints element every 100ms
-    Observable *every_100_ms_printer = observable_join(random_sensor,
-                                       observable_timer_create(loop, 100),
-                                       take_random_callback);
+    // Pakc data of 10
+    Observable *pack_10 = observable_map_create(random_sensor, pack_10_callback);
 
-    // Group elements for each second
-    Observable *each_1_second_grouper = observable_join(random_sensor,
-                                        observable_timer_create(loop, 1000),
-                                        sum_callback);
     // Returns average for every group
-    Observable *average = observable_map_create(each_1_second_grouper, average_terminator);
+    Observable *average = observable_map_create(pack_10, average_terminator);
+
     // Prints average
     Observable *average_printer = observable_map_create(average, int_logger);
 
-    pipemanager_add_pipeline(manager, every_100_ms_printer, 42);
     pipemanager_add_pipeline(manager, average_printer, 17);
 
-    (void) loop_run(loop);
-    loop_close(loop);
-#endif
+    observable_generator_run(random_sensor);
+
     log_deinit();
     return 0;
 }

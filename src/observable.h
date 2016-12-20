@@ -79,6 +79,6 @@ void observable_unsubscribe(Observable *listener, Observable *subscriber);
  *        observables and free internal resources. If observable still
  *        has subscribers, does nothing
  * @param observable Observable to destroy
- * @return If succesfully destroyed.
+ * @return If successfully destroyed.
  */
 bool observable_destroy(Observable *observable);

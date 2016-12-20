@@ -1,7 +1,7 @@
 /**
  * @file observable_proxy.h
  * @date 16 Dec 2016
- * @brief Proxy source observable
+ * @brief Utility Proxy source observable
  */
 
 #pragma once
@@ -10,7 +10,7 @@
 
 /**
  * @brief observable_proxy_create Create proxy source
- * @return New observable if succesfully, NULL otherwise
+ * @return New observable if successfully, NULL otherwise
  */
 Observable *observable_proxy_create();
 

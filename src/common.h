@@ -6,7 +6,5 @@
 #include <stddef.h>
 #include <stdarg.h>
 
-#include <uv.h>
-
 #include "log.h"
 #include "utils/utils.h"

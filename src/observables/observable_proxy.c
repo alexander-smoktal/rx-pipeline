@@ -7,7 +7,7 @@ typedef struct {
     Observable base;
 } Proxy;
 
-void proxy_destroy_cb(Observable *observable) {
+static void proxy_destroy_cb(Observable *observable) {
     Proxy *proxy = (Proxy *) observable;
 
     observable_deinit(observable);

@@ -3,6 +3,7 @@ set(SRC_LIST
     log.c
     main.c
     observable.c
+    observables/observable_data_generator.c
     observables/observable_map.c
     observables/observable_join.c
     observables/observable_proxy.c
