@@ -44,7 +44,7 @@ Observable *observable_join(Observable *left, Observable *right, observable_join
     CHECK_NULL_RETURN(left, NULL);
     CHECK_NULL_RETURN(right, NULL);
 
-    Join *result = malloc(sizeof(Join));
+    Join *result = xmalloc(sizeof(Join));
 
     observable_init(&result->base);
     result->base.destroy_cb = join_destroy_callback;

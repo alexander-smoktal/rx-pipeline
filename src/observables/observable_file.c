@@ -27,7 +27,7 @@ static void libuv_file_close_callback(uv_fs_t *req) {
 
 static void file_destroy_callback(Observable *observable) {
     File *file = (File *) observable;
-    uv_fs_t *close_req = malloc(sizeof(uv_fs_t));
+    uv_fs_t *close_req = xmalloc(sizeof(uv_fs_t));
     close_req->data = observable;
 
     uv_fs_close(file->open_req.loop, close_req, file->open_req.file, libuv_file_close_callback);
@@ -73,8 +73,8 @@ Observable *observable_file_create(Loop *loop, const char *path, size_t buffer_s
     CHECK_NULL_RETURN(loop, NULL);
     CHECK_NULL_RETURN(path, NULL);
 
-    File *result = malloc(sizeof(File));
-    result->iov.base = malloc(buffer_size);
+    File *result = xmalloc(sizeof(File));
+    result->iov.base = xmalloc(buffer_size);
     result->iov.len = buffer_size;
     result->open_req.data = result;
     result->read_req.data = result;

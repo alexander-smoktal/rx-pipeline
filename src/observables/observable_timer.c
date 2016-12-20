@@ -1,4 +1,3 @@
-
 #include "observable_timer.h"
 
 /**
@@ -34,10 +33,10 @@ static void libuv_timer_callback(uv_timer_t *handle) {
 Observable *observable_timer_create(Loop *loop, uint64_t msec) {
     CHECK_NULL_RETURN(loop, NULL);
 
-    Timer *result = malloc(sizeof(Timer));
+    Timer *result = xmalloc(sizeof(Timer));
     observable_init(&result->base);
     result->base.destroy_cb = timer_destroy_callback;
-    result->timer = malloc(sizeof(uv_timer_t));
+    result->timer = xmalloc(sizeof(uv_timer_t));
 
     int ret = uv_timer_init(loop->loop, result->timer);
 

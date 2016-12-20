@@ -18,6 +18,9 @@
 #define INT_TO_POINTER(i) ((void *) (long) (i))
 #define UINT_TO_POINTER(u) ((void *) (unsigned long) (u))
 
+// malloc wrapper
+void *xmalloc(unsigned size);
+
 // KLib instances
 // Pointer hash map. Must be used everywhere, to decrease memory footprint
 KHASH_MAP_INIT_INT(ptr_hash_map, void *)

@@ -1,6 +1,14 @@
 #include "atom.h"
 #include "common.h"
 
+static void *udp_socket_handler(Observable *observable, void *data) {
+    // BEWARE: data may point not to null-terminated string.
+    if (data && data != end_of_data()) {
+        log_error("udp_sensor_handler: data: '%s'\n", (char *)data);
+    }
+    return data;
+}
+
 static void *sensor_handler(Observable *observable, void *data) {
     int *sensor_data = (int *) data;
 

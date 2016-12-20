@@ -1,5 +1,4 @@
-#ifndef _ATOM_H_
-#define _ATOM_H_
+#pragma once
 
 #include "loop.h"
 #include "log.h"
@@ -10,5 +9,3 @@
 #include "observables/observable_map.h"
 #include "observables/observable_timer.h"
 #include "observables/observable_udp_socket.h"
-
-#endif // _ATOM_H_
