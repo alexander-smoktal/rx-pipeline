@@ -1,4 +1,3 @@
-
 #include "observable_timer.h"
 
 /**

@@ -1,7 +1,6 @@
-
 #include "observable.h"
 
-// Eond of data
+// End of data
 static void* EOD = INT_TO_POINTER(0xE0D);
 
 void *end_of_data() {
