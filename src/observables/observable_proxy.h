@@ -19,4 +19,4 @@ Observable *observable_proxy_create();
  * @param proxy Proxy observable
  * @param data Data to push
  */
-void observable_proxy_push(Observable *proxy, void *data);
+void observable_proxy_push(Observable *proxy, Buffer data);

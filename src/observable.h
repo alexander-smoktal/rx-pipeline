@@ -16,9 +16,13 @@ struct Observable;
 typedef struct Observable Observable;
 
 /**
- * @brief Callback to handle Observable event data
+ * @brief Callback to handle Observable event data.
+ *        Incoming data may be data buffer, or 'buffer_end_of_data()'.
+ *
+ *        If you want to indicate end of observable data, return 'buffer_end_of_data()'.
+ *        If you don't have data to broadcast, return 'buffer_no_data()'.
  */
-typedef void *(*observable_cb)(Observable *observable, void *data);
+typedef Buffer (*observable_cb)(Observable *observable, Buffer data);
 
 /**
  * @brief Callback to destroy observable (virtual destructor)
@@ -34,12 +38,6 @@ struct Observable {
     observable_destroy_cb destroy_cb;   /**< Callback to call to free internal resources */
     void *data;                         /**< User data */
 };
-
-/**
- * @brief end_of_data
- * @return Magic number, which indicated end of observable data
- */
-void *end_of_data();
 
 /**
  * @brief observable_init Initialize observable internal data
@@ -58,7 +56,7 @@ void observable_deinit(Observable *observable);
  * @param observable Observable
  * @param data Data to broadcast
  */
-void observable_broadcast(Observable *observable, void *data);
+void observable_broadcast(Observable *observable, Buffer data);
 
 /**
  * @brief observable_subscribe Subscribe to observable events

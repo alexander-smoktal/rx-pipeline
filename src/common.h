@@ -7,4 +7,5 @@
 #include <stdarg.h>
 
 #include "log.h"
+#include "buffer.h"
 #include "utils/utils.h"

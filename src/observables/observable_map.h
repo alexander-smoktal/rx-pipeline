@@ -1,3 +1,9 @@
+/**
+ * @file observable_map.h
+ * @date 19 Dec 2016
+ * @brief Observable data mapper
+ */
+
 #pragma once
 
 #include "../observable.h"

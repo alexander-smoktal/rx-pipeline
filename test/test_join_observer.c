@@ -3,14 +3,14 @@
 
 static int current_result = 0;
 
-static void *join_callback(Observable *left, Observable *right, void *data) {
+static Buffer join_callback(Observable *left, Observable *right, Buffer data) {
     if (left) {
-        current_result += GPOINTER_TO_INT(data);
+        current_result += GPOINTER_TO_INT(data.data);
     } else {
-        current_result -= GPOINTER_TO_INT(data);
+        current_result -= GPOINTER_TO_INT(data.data);
     }
 
-    return NULL;
+    return buffer_no_data();
 }
 
 static void test_join_observer() {
@@ -20,16 +20,16 @@ static void test_join_observer() {
 
     g_assert_cmpint(current_result, ==, 0);
 
-    observable_proxy_push(left, GINT_TO_POINTER(42));
+    observable_proxy_push(left, buffer_create(GINT_TO_POINTER(42), sizeof(int)));
     g_assert_cmpint(current_result, ==, 42);
 
-    observable_proxy_push(right, GINT_TO_POINTER(21));
+    observable_proxy_push(right, buffer_create(GINT_TO_POINTER(21), sizeof(int)));
     g_assert_cmpint(current_result, ==, 21);
 
-    observable_proxy_push(right, GINT_TO_POINTER(121));
+    observable_proxy_push(right, buffer_create(GINT_TO_POINTER(121), sizeof(int)));
     g_assert_cmpint(current_result, ==, -100);
 
-    observable_proxy_push(left, GINT_TO_POINTER(1100));
+    observable_proxy_push(left, buffer_create(GINT_TO_POINTER(1100), sizeof(int)));
     g_assert_cmpint(current_result, ==, 1000);
 
     observable_destroy(join);

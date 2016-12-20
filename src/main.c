@@ -6,13 +6,13 @@
 
 typedef kvec_t(int) k_int_vec;
 
-static void *random_data_generator() {
+static Buffer random_data_generator() {
     usleep(100e3);
 
-    return INT_TO_POINTER(rand());
+    return buffer_create(INT_TO_POINTER(rand()), sizeof(int));
 }
 
-static void *pack_10_callback(Observable *source, void *data) {
+static Buffer pack_10_callback(Observable *source, Buffer data) {
     static k_int_vec *data_array = NULL;
 
     if (!data_array) {
@@ -23,18 +23,18 @@ static void *pack_10_callback(Observable *source, void *data) {
         kv_clear(*data_array);
     }
 
-    int value = POINTER_TO_INT(data);
+    int value = POINTER_TO_INT(data.data);
     kv_push(int, *data_array, value);
 
     if (kv_size(*data_array) == 10) {
-        return data_array;
+        return buffer_create(data_array, sizeof(int) * kv_size(*data_array));
     } else {
-        return NULL;
+        return buffer_no_data();
     }
 }
 
-static void *average_terminator(Observable *observable, void *data) {
-    k_int_vec *values = (k_int_vec *) data;
+static Buffer average_terminator(Observable *observable, Buffer data) {
+    k_int_vec *values = (k_int_vec *) data.data;
 
     int result = 0;
 
@@ -42,14 +42,14 @@ static void *average_terminator(Observable *observable, void *data) {
         result += kv_A(*values, i);
     }
 
-    return INT_TO_POINTER(result / kv_size(*values));
+    return buffer_create(INT_TO_POINTER(result / kv_size(*values)), sizeof(int));
 }
 
-static void *int_logger(Observable *observable, void *data) {
-    int value = POINTER_TO_INT(data);
+static Buffer int_logger(Observable *observable, Buffer data) {
+    int value = POINTER_TO_INT(data.data);
 
     log_error("last average: %d", value);
-    return NULL;
+    return buffer_no_data();
 }
 
 int main(int argc, char *argv[]) {

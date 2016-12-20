@@ -6,6 +6,7 @@ find_package (PkgConfig REQUIRED)
 if (USE_MUSL)
     message(STATUS "Using Musl compiler")
     set(CMAKE_C_COMPILER musl-gcc)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -static")
 endif()
 
 if(ENABLE_LIBUV)
@@ -19,7 +20,7 @@ if(ENABLE_LIBUV)
     set(ATOM_LIBS uv)
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -static")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Os -flto")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g")
 

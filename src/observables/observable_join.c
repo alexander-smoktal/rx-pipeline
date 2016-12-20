@@ -13,22 +13,22 @@ typedef struct {
 } Join;
 
 
-static void *left_join_callback(Observable *observable, void *data) {
+static Buffer left_join_callback(Observable *observable, Buffer data) {
     Join *join_point = (Join *) observable->data;
 
-    void *result = join_point->callback(&join_point->base, NULL, data);
+    Buffer result = join_point->callback(&join_point->base, NULL, data);
     observable_broadcast(&join_point->base, result);
 
-    return NULL;
+    return buffer_no_data();
 }
 
-static void *right_join_callback(Observable *observable, void *data) {
+static Buffer right_join_callback(Observable *observable, Buffer data) {
     Join *join_point = (Join *) observable->data;
 
-    void *result = join_point->callback(NULL, &join_point->base, data);
+    Buffer result = join_point->callback(NULL, &join_point->base, data);
     observable_broadcast(&join_point->base, result);
 
-    return NULL;
+    return buffer_no_data();
 }
 
 static void join_destroy_callback(Observable *observable) {

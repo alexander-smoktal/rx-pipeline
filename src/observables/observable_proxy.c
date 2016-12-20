@@ -23,6 +23,6 @@ Observable *observable_proxy_create() {
     return (Observable *) result;
 }
 
-void observable_proxy_push(Observable *proxy, void *data) {
+void observable_proxy_push(Observable *proxy, Buffer data) {
     observable_broadcast(proxy, data);
 }

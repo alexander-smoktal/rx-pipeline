@@ -1,6 +1,5 @@
 #pragma once
 
-#include "log.h"
 #include "utils/utils.h"
 #include "pipeline.h"
 

@@ -4,16 +4,16 @@
 static int sum = 0;
 static int mul = 1;
 
-static void *sum_callback(Observable *observable, void *data) {
-    sum += GPOINTER_TO_INT(data);
+static Buffer sum_callback(Observable *observable, Buffer data) {
+    sum += GPOINTER_TO_INT(data.data);
 
-    return NULL;
+    return buffer_no_data();
 }
 
-static void *mul_callback(Observable *observable, void *data) {
-    mul *= GPOINTER_TO_INT(data);
+static Buffer mul_callback(Observable *observable, Buffer data) {
+    mul *= GPOINTER_TO_INT(data.data);
 
-    return NULL;
+    return buffer_no_data();
 }
 
 static void test_map_observer() {
@@ -24,19 +24,19 @@ static void test_map_observer() {
     g_assert_cmpint(sum, ==, 0);
     g_assert_cmpint(mul, ==, 1);
 
-    observable_proxy_push(source, GINT_TO_POINTER(42));
+    observable_proxy_push(source, buffer_create(GINT_TO_POINTER(42), sizeof(int)));
     g_assert_cmpint(sum, ==, 42);
     g_assert_cmpint(mul, ==, 42);
 
-    observable_proxy_push(source, GINT_TO_POINTER(21));
+    observable_proxy_push(source, buffer_create(GINT_TO_POINTER(21), sizeof(int)));
     g_assert_cmpint(sum, ==, 63);
     g_assert_cmpint(mul, ==, 882);
 
-    observable_proxy_push(source, GINT_TO_POINTER(-121));
+    observable_proxy_push(source, buffer_create(GINT_TO_POINTER(-121), sizeof(int)));
     g_assert_cmpint(sum, ==, -58);
     g_assert_cmpint(mul, ==, -106722);
 
-    observable_proxy_push(source, GINT_TO_POINTER(1));
+    observable_proxy_push(source, buffer_create(GINT_TO_POINTER(1), sizeof(int)));
     g_assert_cmpint(sum, ==, -57);
     g_assert_cmpint(mul, ==, -106722);
 

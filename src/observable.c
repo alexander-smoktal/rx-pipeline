@@ -1,12 +1,5 @@
 #include "observable.h"
 
-// End of data
-static void* EOD = INT_TO_POINTER(0xE0D);
-
-void *end_of_data() {
-    return EOD;
-}
-
 void observable_init(Observable *observable) {
     if (observable) {
         observable->subscribers = kh_init(ptr_hash_map);
@@ -19,19 +12,19 @@ void observable_deinit(Observable *observable) {
     kh_destroy(ptr_hash_map, observable->subscribers);
 }
 
-static inline void send_to_subscriber(Observable *observable, void *data) {
-    if (observable->callback && data) {
+static inline void send_to_subscriber(Observable *observable, Buffer data) {
+    if (observable->callback && buffer_has_data(data)) {
         // If result of our callback non-NULL, broadcast to subscribers.
-        void *result = observable->callback(observable, data);
+        Buffer result = observable->callback(observable, data);
 
-        if (result) {
+        if (buffer_has_data(result)) {
             observable_broadcast(observable, result);
         }
     }
 }
 
-void observable_broadcast(Observable *observable, void *data) {
-    if (data) {
+void observable_broadcast(Observable *observable, Buffer data) {
+    if (buffer_has_data(data)) {
         Observable *current_subscriber = NULL;
         kh_foreach_value(observable->subscribers, current_subscriber, {
                             send_to_subscriber(current_subscriber, data);

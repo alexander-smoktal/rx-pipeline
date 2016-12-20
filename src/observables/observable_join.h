@@ -10,8 +10,12 @@
 
 /**
  * @brief Callback to join observables data.
+ *        Incoming data may be data buffer, or 'buffer_end_of_data()'.
+ *
+ *        If you want to indicate end of observable data, return 'buffer_end_of_data()'.
+ *        If you don't have data to broadcast, return 'buffer_no_data()'.
  */
-typedef void *(*observable_join_cb)(Observable *left, Observable *right, void *data);
+typedef Buffer (*observable_join_cb)(Observable *left, Observable *right, Buffer data);
 
 /**
  * @brief observable_join Create joined Observable. Inside the callback data source
