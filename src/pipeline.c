@@ -11,7 +11,7 @@ struct PipelineManager {
 };
 
 PipelineManager *pipemanager_create() {
-    PipelineManager *result = malloc(sizeof(PipelineManager));
+    PipelineManager *result = xmalloc(sizeof(PipelineManager));
 
     result->pipelines = kh_init(ptr_hash_map);
 

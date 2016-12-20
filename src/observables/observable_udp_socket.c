@@ -18,14 +18,7 @@ static void udp_socket_destroy_cb(Observable *observable) {
 }
 
 static void alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf) {
-    buf->base = malloc(suggested_size);
-
-    if (buf->base == NULL) {
-        // FIXME: make a proper memory-failure reaction
-        log_error("Failed to allocate memory. Exiting.");
-        exit(EXIT_FAILURE);
-    }
-
+    buf->base = xmalloc(suggested_size);
     buf->len = suggested_size;
 }
 
@@ -57,8 +50,7 @@ Observable *observable_udp_socket_create(Loop *loop, unsigned short port, observ
 
     CHECK_NULL_RETURN(loop, NULL);
 
-    UDP_Socket *udp_socket = malloc(sizeof(UDP_Socket));
-    // FIXME: check malloc return value for NULL
+    UDP_Socket *udp_socket = xmalloc(sizeof(UDP_Socket));
 
     observable_init(&udp_socket->base);
     udp_socket->base.destroy_cb = udp_socket_destroy_cb;

@@ -2,8 +2,8 @@
 #include "utils/utils.h"
 
 Loop *loop_create() {
-    Loop *result = malloc(sizeof(Loop));
-    result->loop = malloc(sizeof(uv_loop_t));
+    Loop *result = xmalloc(sizeof(Loop));
+    result->loop = xmalloc(sizeof(uv_loop_t));
     uv_loop_init(result->loop);
 
     return result;

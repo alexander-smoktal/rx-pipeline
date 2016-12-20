@@ -24,7 +24,7 @@ static void map_destroy_callback(Observable *observable) {
 Observable *observable_map_create(Observable *observable, observable_cb callback) {
     CHECK_NULL_RETURN(observable, NULL);
 
-    Map *result = malloc(sizeof(Map));
+    Map *result = xmalloc(sizeof(Map));
 
     observable_init(&result->base);
     result->base.destroy_cb = map_destroy_callback;
