@@ -4,7 +4,7 @@
  * @brief Proxy. Source observable. Broadcasts pushed data.
  */
 typedef struct {
-    Observable base;
+    Observable base; /**< Parent observable structure */
 } Proxy;
 
 static void proxy_destroy_cb(Observable *observable) {

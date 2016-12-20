@@ -32,3 +32,7 @@ add_custom_target(astyle
     COMMAND astyle --options=astylerc.sh \"src/*.c\" \"src/*.h\" \"test/*.c\" \"test/*.h\"
     COMMAND find ${CMAKE_SOURCE_DIR} -type f -name '*.orig' -delete
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+add_custom_target(documentation
+    COMMAND doxygen Doxyfile.sh
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/doc)

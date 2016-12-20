@@ -8,9 +8,12 @@
 
 #include "utils/utils.h"
 
+/**
+ * @brief Buffer Observable data Buffer
+ */
 typedef struct {
-    void *data;
-    size_t size;
+    void *data;    /**< Data */
+    size_t size;   /**< Data size in bytes */
 } Buffer;
 
 /**
@@ -25,6 +28,11 @@ static inline Buffer buffer_create(void *data, size_t size) {
     };
 }
 
+/**
+ * @brief buffer_has_data If buffer contains data, which should be broadcasted
+ * @param buffer Buffer
+ * @return If we have Buffer with data
+ */
 static inline bool buffer_has_data(Buffer buffer) {
     return buffer.data != NULL;
 }

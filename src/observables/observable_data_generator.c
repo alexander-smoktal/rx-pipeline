@@ -4,9 +4,9 @@
  * @brief Generator. Generates observable data
  */
 typedef struct {
-    Observable base;
-    generator_fn func;
-    bool run;
+    Observable base;    /**< Parent observable structure */
+    generator_fn func;  /**< Function, which generates data */
+    bool run;           /**< If we should generate data, or shutdown */
 } Generator;
 
 static void generator_destroy_cb(Observable *observable) {
