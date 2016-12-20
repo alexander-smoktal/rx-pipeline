@@ -1,7 +1,7 @@
 #include "utils.h"
 
-void *xmalloc(unsigned sz) {
-    void *p = malloc(sz);
+void *xmalloc(unsigned size) {
+    void *p = malloc(size);
     if (p == NULL) {
         log_error("Failed to allocate memory. Exiting.");
         exit(EXIT_FAILURE);

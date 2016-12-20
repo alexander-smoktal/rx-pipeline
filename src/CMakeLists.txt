@@ -1,4 +1,3 @@
-
 set(SRC_LIST
     log.c
     main.c
@@ -9,15 +8,6 @@ set(SRC_LIST
     observables/observable_proxy.c
     pipeline.c
     utils/utils.c)
-
-if(ENABLE_LIBUV)
-    set(SRC_LIST ${SRC_LIST}
-        loop.c
-        observables/observable_file.c
-        observables/observable_timer.c
-        observables/observable_udp_socket.c
-        )
-endif()
 
 # For tests
 set(ATOM_SOURCES ${SRC_LIST} PARENT_SCOPE)

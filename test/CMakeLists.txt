@@ -7,6 +7,7 @@ list(REMOVE_ITEM ATOM_SOURCES main.c)
 foreach(SOURCE ${ATOM_SOURCES})
     set(OBJECT_SOURCES "../src/${SOURCE}" ${OBJECT_SOURCES})
 endforeach()
+
 # Add utils
 list(APPEND OBJECT_SOURCES "utils.c")
 add_library(atom_object_library OBJECT ${OBJECT_SOURCES})
@@ -17,14 +18,6 @@ include_directories(../src)
 set(TEST_SRC
     test_join_observer
     test_map_observer)
-
-# Libuv tests
-if(ENABLE_LIBUV)
-    set(TEST_SRC ${TEST_SRC}
-        test_file_observer
-        test_timer_observer
-        test_udp_socket_observer)
-endif()
 
 foreach(SRC ${TEST_SRC})
     add_executable(${SRC} "${SRC}" $<TARGET_OBJECTS:atom_object_library>)
