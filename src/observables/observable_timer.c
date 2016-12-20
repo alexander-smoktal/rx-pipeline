@@ -28,7 +28,7 @@ static void libuv_timer_callback(uv_timer_t *handle) {
     Observable *observable = (Observable *) handle->data;
 
     // Timer doesn't produce any meaningful data. Push a magic value
-    observable_broadcast(observable, GINT_TO_POINTER(0xBAADF00D));
+    observable_broadcast(observable, INT_TO_POINTER(0xBAADF00D));
 }
 
 Observable *observable_timer_create(Loop *loop, uint64_t msec) {

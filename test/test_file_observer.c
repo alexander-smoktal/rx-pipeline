@@ -1,4 +1,6 @@
 #include "atom.h"
+#include "utils.h"
+
 #include <unistd.h>
 #include <string.h>
 

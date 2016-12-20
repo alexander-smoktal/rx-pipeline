@@ -3,9 +3,6 @@ cmake_minimum_required(VERSION 2.8)
 
 find_package (PkgConfig REQUIRED)
 
-pkg_check_modules(GLIB2 REQUIRED glib-2.0)
-include_directories(${GLIB2_INCLUDE_DIRS} "/usr/include")
-
 find_library(LIBUV NAMES uv libuv)
 if(LIBUV)
     message(STATUS "Found libuv: " ${LIBUV})

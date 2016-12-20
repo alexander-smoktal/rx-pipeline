@@ -1,4 +1,7 @@
 
+pkg_check_modules(GLIB2 REQUIRED glib-2.0)
+include_directories(${GLIB2_INCLUDE_DIRS} "/usr/include")
+
 # First let's make object library from atom sources, to test
 list(REMOVE_ITEM ATOM_SOURCES main.c)
 foreach(SOURCE ${ATOM_SOURCES})
@@ -15,6 +18,6 @@ file(GLOB TESTS "test_*.c")
 foreach(TEST ${TESTS})
   get_filename_component(EXENAME ${TEST} NAME_WE)
   add_executable(${EXENAME} ${TEST} $<TARGET_OBJECTS:atom_object_library>)
-  target_link_libraries(${EXENAME} ${GLIB2_LIBRARIES} uv)
+  target_link_libraries(${EXENAME} ${GLIB2_LIBRARIES} uv glib-2.0)
   add_test(NAME "${EXENAME}" COMMAND "$<TARGET_FILE:${EXENAME}>")
 endforeach()

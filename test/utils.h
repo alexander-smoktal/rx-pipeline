@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glib.h>
+
 #include "atom.h"
 
 Observable *observable_pipe_create();

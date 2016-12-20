@@ -64,7 +64,7 @@ static void libuv_file_open_callback(uv_fs_t *req) {
     } else {
         log_error("Failed to open a file '%s' due to: %s", req->path, uv_strerror(req->result));
 
-        file->base.callback(&file->base, GINT_TO_POINTER(0xBAADF00D));
+        file->base.callback(&file->base, end_of_data());
         file_destroy_callback(&file->base);
     }
 }

@@ -1,6 +1,8 @@
-#include "atom.h"
 #include <unistd.h>
 #include <string.h>
+
+#include "atom.h"
+#include "utils.h"
 
 static bool timer_1 = false;
 static bool timer_2 = false;

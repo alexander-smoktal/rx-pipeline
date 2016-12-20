@@ -10,7 +10,7 @@ set(SRC_LIST
     observables/observable_timer.c
     observables/observable_udp_socket.c
     pipeline.c
-    utils.c)
+    utils/utils.c)
 
 # For tests
 set(ATOM_SOURCES ${SRC_LIST} PARENT_SCOPE)

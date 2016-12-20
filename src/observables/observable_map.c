@@ -9,7 +9,7 @@ typedef struct {
 } Map;
 
 static void map_destroy_callback(Observable *observable) {
-    if (g_hash_table_size(observable->subscribers) == 0) {
+    if (kh_size(observable->subscribers) == 0) {
         observable_deinit(observable);
 
         Map *map = (Map *) observable;

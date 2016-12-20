@@ -29,10 +29,10 @@ typedef void (*observable_destroy_cb)(Observable *observable);
  * @brief Observable pipe
  */
 struct Observable {
-    GHashTable *subscribers;          /**< Set of observable subscribers */
-    observable_cb callback;           /**< Callback to cal on event */
-    observable_destroy_cb destroy_cb; /**< Callback to call to free internal resources */
-    void *data;                       /**< User data */
+    khash_t(ptr_hash_map) *subscribers; /**< Set of observable subscribers */
+    observable_cb callback;             /**< Callback to cal on event */
+    observable_destroy_cb destroy_cb;   /**< Callback to call to free internal resources */
+    void *data;                         /**< User data */
 };
 
 /**
