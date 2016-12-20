@@ -4,6 +4,7 @@
 
 /**
  * @brief Observable join
+ * @ingroup Observable_Join
  */
 typedef struct {
     Observable base;             /**< Parent observable structure */

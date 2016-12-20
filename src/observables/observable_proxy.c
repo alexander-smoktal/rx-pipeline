@@ -2,6 +2,7 @@
 
 /**
  * @brief Proxy. Source observable. Broadcasts pushed data.
+ * @ingroup Observable_Proxy
  */
 typedef struct {
     Observable base; /**< Parent observable structure */

@@ -8,6 +8,10 @@
 
 #include "../observable.h"
 
+/** @addtogroup Observable_Join
+ *  @{
+ */
+
 /**
  * @brief Callback to join observables data.
  *        Incoming data may be data buffer, or 'buffer_end_of_data()'.
@@ -26,3 +30,5 @@ typedef Buffer(*observable_join_cb)(Observable *left, Observable *right, Buffer 
  * @return New Observable if successfully, NULL otherwise.
  */
 Observable *observable_join(Observable *left, Observable *right, observable_join_cb callback);
+
+/** @}*/

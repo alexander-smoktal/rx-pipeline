@@ -1,5 +1,5 @@
 /**
- * @file observable_proxy.h
+ * @file observable_data_generator.h
  * @date 20 Dec 2016
  * @brief Data generator source observable
  */
@@ -7,6 +7,10 @@
 #pragma once
 
 #include "../observable.h"
+
+/** @addtogroup Observable_Generator
+ *  @{
+ */
 
 /**
  * @brief Function, which generates Observable data
@@ -25,3 +29,5 @@ Observable *observable_generator_create(generator_fn func);
  * @param observable Generator
  */
 void observable_generator_run(Observable *observable);
+
+/** @}*/

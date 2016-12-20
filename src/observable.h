@@ -10,6 +10,10 @@
 
 struct Observable;
 
+/** @addtogroup Observable_Interface
+ *  @{
+ */
+
 /**
  * @brief Observable typedef to calm down doxygen
  */
@@ -80,3 +84,5 @@ void observable_unsubscribe(Observable *listener, Observable *subscriber);
  * @return If successfully destroyed.
  */
 bool observable_destroy(Observable *observable);
+
+/** @}*/

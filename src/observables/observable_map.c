@@ -1,7 +1,9 @@
 #include "observable_map.h"
 
+
 /**
  * @brief Observable map
+ * @ingroup Observable_Map
  */
 typedef struct {
     Observable base;    /**< Parent observable structure */

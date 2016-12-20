@@ -8,6 +8,10 @@
 
 #include "utils/utils.h"
 
+/** @addtogroup Buffer
+ *  @{
+ */
+
 /**
  * @brief Buffer Observable data Buffer
  */
@@ -53,3 +57,5 @@ static inline Buffer buffer_no_data() {
 static inline Buffer buffer_end_of_data() {
     return buffer_create(INT_TO_POINTER(0xE0D), -1);
 }
+
+/** @}*/

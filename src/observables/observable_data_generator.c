@@ -2,6 +2,7 @@
 
 /**
  * @brief Generator. Generates observable data
+ * @ingroup Observable_Generator
  */
 typedef struct {
     Observable base;    /**< Parent observable structure */

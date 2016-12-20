@@ -8,6 +8,10 @@
 
 #include "../observable.h"
 
+/** @addtogroup Observable_Map
+ *  @{
+ */
+
 /**
  * @brief observable_map_create Create map Observable
  * @param observable Observable to map
@@ -15,3 +19,5 @@
  * @return New Observable if cussesfully, NULL otherwise
  */
 Observable *observable_map_create(Observable *observable, observable_cb callback);
+
+/** @}*/
