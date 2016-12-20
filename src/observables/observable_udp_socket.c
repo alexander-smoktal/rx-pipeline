@@ -1,8 +1,11 @@
 #include "observable_udp_socket.h"
 
+/**
+ * @brief udp socket (UDP_Socket) observable
+ */
 typedef struct {
-    Observable base;
-    uv_udp_t udp;
+    Observable base; /**< Parent observable structure */
+    uv_udp_t udp;    /**< Libuv udp handle */
 } UDP_Socket;
 
 static void udp_socket_destroy_cb(Observable *observable) {
