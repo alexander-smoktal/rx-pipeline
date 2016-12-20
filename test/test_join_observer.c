@@ -14,22 +14,22 @@ static void *join_callback(Observable *left, Observable *right, void *data) {
 }
 
 static void test_join_observer() {
-    Observable *left = observable_pipe_create();
-    Observable *right = observable_pipe_create();
+    Observable *left = observable_proxy_create();
+    Observable *right = observable_proxy_create();
     Observable *join = observable_join(left, right, join_callback);
 
     g_assert_cmpint(current_result, ==, 0);
 
-    observable_pipe_push(left, GINT_TO_POINTER(42));
+    observable_proxy_push(left, GINT_TO_POINTER(42));
     g_assert_cmpint(current_result, ==, 42);
 
-    observable_pipe_push(right, GINT_TO_POINTER(21));
+    observable_proxy_push(right, GINT_TO_POINTER(21));
     g_assert_cmpint(current_result, ==, 21);
 
-    observable_pipe_push(right, GINT_TO_POINTER(121));
+    observable_proxy_push(right, GINT_TO_POINTER(121));
     g_assert_cmpint(current_result, ==, -100);
 
-    observable_pipe_push(left, GINT_TO_POINTER(1100));
+    observable_proxy_push(left, GINT_TO_POINTER(1100));
     g_assert_cmpint(current_result, ==, 1000);
 
     observable_destroy(join);

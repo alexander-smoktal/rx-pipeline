@@ -1,0 +1,22 @@
+/**
+ * @file observable_proxy.h
+ * @date 16 Dec 2016
+ * @brief Proxy source observable
+ */
+
+#pragma once
+
+#include "../observable.h"
+
+/**
+ * @brief observable_proxy_create Create proxy source
+ * @return New observable if succesfully, NULL otherwise
+ */
+Observable *observable_proxy_create();
+
+/**
+ * @brief observable_proxy_push Push data to proxy observable
+ * @param proxy Proxy observable
+ * @param data Data to push
+ */
+void observable_proxy_push(Observable *proxy, void *data);

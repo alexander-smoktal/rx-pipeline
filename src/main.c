@@ -84,6 +84,7 @@ int main(int argc, char *argv[]) {
     srand(time(NULL));
     log_init();
 
+#ifdef ENABLE_LIBUV
     Loop *loop = loop_create();
     PipelineManager *manager = pipemanager_create();
 
@@ -130,7 +131,7 @@ int main(int argc, char *argv[]) {
 
     (void) loop_run(loop);
     loop_close(loop);
-
+#endif
     log_deinit();
     return 0;
 }
