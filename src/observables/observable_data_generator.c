@@ -29,7 +29,7 @@ void observable_generator_run(Observable *observable) {
     Generator *generator = (Generator *) observable;
 
     while (generator->run) {
-        observable_broadcast(&generator->base, generator->func());
+        observable_broadcast(&generator->base, generator->func(&generator->base));
     }
 
     observable_deinit(&generator->base);

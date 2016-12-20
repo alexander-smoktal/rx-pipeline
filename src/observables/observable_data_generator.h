@@ -1,6 +1,6 @@
 /**
  * @file observable_proxy.h
- * @date 16 Dec 2016
+ * @date 20 Dec 2016
  * @brief Data generator source observable
  */
 
@@ -11,7 +11,7 @@
 /**
  * @brief Function, which generates Observable data
  */
-typedef Buffer (*generator_fn)();
+typedef Buffer (*generator_fn)(Observable *observable);
 
 /**
  * @brief observable_generator_create Create new Generator

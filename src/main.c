@@ -6,7 +6,7 @@
 
 typedef kvec_t(int) k_int_vec;
 
-static Buffer random_data_generator() {
+static Buffer random_data_generator(Observable *observable) {
     usleep(100e3);
 
     return buffer_create(INT_TO_POINTER(rand()), sizeof(int));

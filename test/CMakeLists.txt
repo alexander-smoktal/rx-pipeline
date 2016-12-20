@@ -17,7 +17,8 @@ include_directories(../src)
 # Global test
 set(TEST_SRC
     test_join_observer
-    test_map_observer)
+    test_map_observer
+    test_data_generator)
 
 foreach(SRC ${TEST_SRC})
     add_executable(${SRC} "${SRC}" $<TARGET_OBJECTS:atom_object_library>)
