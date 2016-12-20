@@ -27,3 +27,7 @@ if (WITH_TESTS)
     include(CTest)
     add_subdirectory(test)
 endif()
+
+add_custom_target(astyle
+    COMMAND astyle --options=astylerc.sh \"src/*.c\" \"src/*.h\" \"test/*.c\" \"test/*.h\"
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

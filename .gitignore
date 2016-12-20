@@ -2,3 +2,5 @@ doc/html
 *.txt.user
 BUILD
 build
+*.c.orig
+*.h.orig
