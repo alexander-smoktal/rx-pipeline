@@ -11,7 +11,7 @@
 /**
  * @brief Function, which generates Observable data
  */
-typedef Buffer (*generator_fn)(Observable *observable);
+typedef Buffer(*generator_fn)(Observable *observable);
 
 /**
  * @brief observable_generator_create Create new Generator

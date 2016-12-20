@@ -20,7 +20,9 @@ typedef struct {
  * @return New buffer
  */
 static inline Buffer buffer_create(void *data, size_t size) {
-    return (Buffer) { .data = data, .size = size };
+    return (Buffer) {
+        .data = data, .size = size
+    };
 }
 
 static inline bool buffer_has_data(Buffer buffer) {

@@ -22,7 +22,7 @@ typedef struct Observable Observable;
  *        If you want to indicate end of observable data, return 'buffer_end_of_data()'.
  *        If you don't have data to broadcast, return 'buffer_no_data()'.
  */
-typedef Buffer (*observable_cb)(Observable *observable, Buffer data);
+typedef Buffer(*observable_cb)(Observable *observable, Buffer data);
 
 /**
  * @brief Callback to destroy observable (virtual destructor)

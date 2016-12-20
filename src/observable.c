@@ -27,8 +27,8 @@ void observable_broadcast(Observable *observable, Buffer data) {
     if (buffer_has_data(data)) {
         Observable *current_subscriber = NULL;
         kh_foreach_value(observable->subscribers, current_subscriber, {
-                            send_to_subscriber(current_subscriber, data);
-                         });
+            send_to_subscriber(current_subscriber, data);
+        });
     }
 }
 

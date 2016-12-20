@@ -35,15 +35,14 @@ static void test_join_observer() {
     observable_destroy(join);
 }
 
-int main (int argc, char *argv[])
-{
-  g_test_init (&argc, &argv, NULL);
-  log_init();
+int main(int argc, char *argv[]) {
+    g_test_init(&argc, &argv, NULL);
+    log_init();
 
-  g_test_add_func ("/observers/test_join_observer", test_join_observer);
+    g_test_add_func("/observers/test_join_observer", test_join_observer);
 
-  int run_result = g_test_run();
-  log_deinit();
+    int run_result = g_test_run();
+    log_deinit();
 
-  return run_result;
+    return run_result;
 }

@@ -43,7 +43,7 @@ void pipemanager_make_pipeline(PipelineManager *manager,
 void pipemanager_destroy(PipelineManager *manager) {
     Observable *current_pipe = NULL;
     kh_foreach_value(manager->pipelines, current_pipe, {
-                        observable_destroy(current_pipe);
-                     });
+        observable_destroy(current_pipe);
+    });
 }
 

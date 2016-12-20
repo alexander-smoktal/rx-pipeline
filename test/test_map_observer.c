@@ -44,15 +44,14 @@ static void test_map_observer() {
     observable_destroy(mul_map);
 }
 
-int main (int argc, char *argv[])
-{
-  g_test_init (&argc, &argv, NULL);
-  log_init();
+int main(int argc, char *argv[]) {
+    g_test_init(&argc, &argv, NULL);
+    log_init();
 
-  g_test_add_func ("/observers/test_map_observer", test_map_observer);
+    g_test_add_func("/observers/test_map_observer", test_map_observer);
 
-  int run_result = g_test_run();
-  log_deinit();
+    int run_result = g_test_run();
+    log_deinit();
 
-  return run_result;
+    return run_result;
 }
